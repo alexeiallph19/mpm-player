@@ -1,1 +1,0 @@
-Archivo de prueba para comprobar permisos de escritura. Se puede borrar.
