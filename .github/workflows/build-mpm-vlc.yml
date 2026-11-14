@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - migracion-vlc-base
+      - interfaz-mpc-qt
     paths:
       - 'build.gradle'
       - 'gradle.properties'
