@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Paleta estilo MPC-QT (tema oscuro Fusion) -->
+    <color name="mpcqt_accent">#2A82DA</color>
+    <color name="mpcqt_accent_pressed">#5AA2EA</color>
+    <color name="mpcqt_groove">#66FFFFFF</color>
+    <color name="mpcqt_window">#353535</color>
+    <color name="mpcqt_base">#191919</color>
+</resources>
