@@ -29,7 +29,7 @@
             android:id="@+id/progress_overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/transparent"
+            android:background="@drawable/mpcqt_hud_background"
             android:visibility="invisible"
             tools:theme="@style/Theme.VLC.Player"
             tools:visibility="visible">
@@ -86,7 +86,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:text="@string/video_information"
-                                android:textColor="@color/orange500"
+                                android:textColor="@color/mpcqt_accent"
                                 vlc:layout_constraintEnd_toEndOf="parent"
                                 vlc:layout_constraintStart_toStartOf="parent"
                                 vlc:layout_constraintTop_toTopOf="parent" />
