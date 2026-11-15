@@ -29,10 +29,21 @@
             android:id="@+id/progress_overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/mpcqt_hud_background"
+            android:background="@color/transparent"
             android:visibility="invisible"
             tools:theme="@style/Theme.VLC.Player"
             tools:visibility="visible">
+
+        <!-- Barra de controles sólida estilo MPC-HC/MPC-QT: solo cubre tiempos, progreso y botones -->
+        <View
+                android:id="@+id/mpcqt_controls_bar"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@color/mpcqt_window"
+                vlc:layout_constraintBottom_toBottomOf="parent"
+                vlc:layout_constraintEnd_toEndOf="parent"
+                vlc:layout_constraintStart_toStartOf="parent"
+                vlc:layout_constraintTop_toTopOf="@+id/player_overlay_time" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/stats_container"
