@@ -315,6 +315,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- Fila de botones estilo MPC-QT: controles de reproducción a la izquierda, opciones a la derecha -->
             <ImageView
                     android:id="@+id/player_overlay_tracks"
                     android:layout_width="wrap_content"
@@ -329,8 +330,7 @@
                     tools:visibility="visible"
                     vlc:layout_constraintBottom_toBottomOf="@+id/player_overlay_play"
                     vlc:layout_constraintEnd_toStartOf="@+id/orientation_toggle"
-                    vlc:layout_constraintHorizontal_chainStyle="spread_inside"
-                    vlc:layout_constraintStart_toStartOf="parent"
+                    vlc:layout_constraintStart_toEndOf="@+id/player_space_right"
                     vlc:layout_constraintTop_toTopOf="@+id/player_overlay_play"
                     vlc:srcCompat="@drawable/ic_player_audiotrack" />
 
@@ -346,24 +346,26 @@
                     android:visibility="visible"
                     tools:visibility="visible"
                     vlc:layout_constraintBottom_toBottomOf="@+id/player_overlay_play"
-                    vlc:layout_constraintEnd_toStartOf="@+id/player_space_left"
+                    vlc:layout_constraintEnd_toStartOf="@+id/player_resize"
                     vlc:layout_constraintStart_toEndOf="@+id/player_overlay_tracks"
                     vlc:layout_constraintTop_toTopOf="@+id/player_overlay_play"
                     vlc:srcCompat="@drawable/ic_player_rotate" />
 
+            <!-- Ya no forma parte de la cadena; queda con ancho cero -->
             <Space
                     android:id="@+id/player_space_left"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     vlc:layout_constraintBottom_toBottomOf="@+id/playlist_previous"
-                    vlc:layout_constraintEnd_toStartOf="@+id/playlist_previous"
-                    vlc:layout_constraintStart_toEndOf="@+id/orientation_toggle"
+                    vlc:layout_constraintEnd_toEndOf="parent"
+                    vlc:layout_constraintStart_toStartOf="parent"
                     vlc:layout_constraintTop_toTopOf="@+id/playlist_previous" />
 
             <ImageView
                     android:id="@+id/playlist_previous"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/small_margins_sides"
                     android:layout_marginEnd="@dimen/large_margins_center"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
@@ -376,7 +378,7 @@
                     tools:visibility="visible"
                     vlc:layout_constraintBottom_toBottomOf="@+id/player_overlay_play"
                     vlc:layout_constraintEnd_toStartOf="@+id/player_overlay_rewind"
-                    vlc:layout_constraintStart_toEndOf="@+id/player_space_left"
+                    vlc:layout_constraintStart_toStartOf="parent"
                     vlc:layout_constraintTop_toTopOf="@+id/player_overlay_play"
                     vlc:srcCompat="@drawable/ic_player_previous" />
 
@@ -418,6 +420,7 @@
                     android:id="@+id/player_overlay_play"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/small_margins_sides"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:contentDescription="@string/play"
@@ -486,12 +489,13 @@
                     vlc:layout_constraintTop_toTopOf="@+id/player_overlay_play"
                     vlc:srcCompat="@drawable/ic_player_next" />
 
+            <!-- Este espacio se estira y separa los controles de la izquierda de las opciones de la derecha -->
             <Space
                     android:id="@+id/player_space_right"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     vlc:layout_constraintBottom_toBottomOf="@+id/playlist_next"
-                    vlc:layout_constraintEnd_toStartOf="@+id/player_resize"
+                    vlc:layout_constraintEnd_toStartOf="@+id/player_overlay_tracks"
                     vlc:layout_constraintStart_toEndOf="@+id/playlist_next"
                     vlc:layout_constraintTop_toTopOf="@+id/playlist_next" />
 
@@ -510,7 +514,7 @@
                     tools:visibility="visible"
                     vlc:layout_constraintBottom_toBottomOf="@+id/player_overlay_play"
                     vlc:layout_constraintEnd_toStartOf="@+id/player_overlay_adv_function"
-                    vlc:layout_constraintStart_toEndOf="@+id/player_space_right"
+                    vlc:layout_constraintStart_toEndOf="@+id/orientation_toggle"
                     vlc:layout_constraintTop_toTopOf="@+id/player_overlay_play"
                     vlc:srcCompat="@drawable/ic_player_ratio" />
 
