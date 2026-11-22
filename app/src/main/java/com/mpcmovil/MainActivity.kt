@@ -1174,7 +1174,7 @@ class MainActivity : AppCompatActivity() {
         val landscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
         val bottom = bottomBar as? LinearLayout ?: return
 
-        // Compact VLC-style HUD: time, seekbar and transport controls stay close together.
+        // Compact MPC-style controls: time, seekbar and transport controls stay close together.
         bottom.setPadding(dp(if (landscape) 12 else 10), dp(if (landscape) 0 else 1),
             dp(if (landscape) 12 else 10), dp(if (landscape) 0 else 1))
         bottom.getChildAt(0)?.let { row ->
@@ -1206,7 +1206,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        topBar.layoutParams = topBar.layoutParams.apply { height = dp(if (landscape) 38 else 46) }
+        topBar.layoutParams = topBar.layoutParams.apply { height = dp(if (landscape) 70 else 76) }
     }
 
     private fun togglePlayback() {
@@ -1261,6 +1261,12 @@ class MainActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.btnSubtitleTrack).setOnClickListener { showAudioSubsPanel("Subs") }
 
         findViewById<Button>(R.id.btnMainMenu).setOnClickListener { showMainMenu(it) }
+        findViewById<Button>(R.id.btnMenuArchivo).setOnClickListener { showTopMenu(it, "Archivo") }
+        findViewById<Button>(R.id.btnMenuVer).setOnClickListener { showTopMenu(it, "Ver") }
+        findViewById<Button>(R.id.btnMenuReproducir).setOnClickListener { showTopMenu(it, "Reproducir") }
+        findViewById<Button>(R.id.btnMenuNavegar).setOnClickListener { showTopMenu(it, "Navegar") }
+        findViewById<Button>(R.id.btnMenuFavoritos).setOnClickListener { showTopMenu(it, "Favoritos") }
+        findViewById<Button>(R.id.btnMenuAyuda).setOnClickListener { showTopMenu(it, "Ayuda") }
 
         findViewById<Button>(R.id.btnLibraryOpen).setOnClickListener { pickFile() }
         findViewById<Button>(R.id.btnLibraryRefresh).setOnClickListener { refreshLibrary() }
