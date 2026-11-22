@@ -1867,7 +1867,11 @@ class MainActivity : AppCompatActivity() {
                 media = preparedMedia
                 preparedMedia.addOption(":file-caching=2000")
                 val inputMode = if (uri.scheme == "content") "AssetFileDescriptor" else "URI directa"
-                val diagnostics = "Archivo: $displayName\nTamaño: $fileSize bytes\nTipo: $mimeType\nURI: $uri\nEsquema: ${uri.scheme}\nEntrada LibVLC: $inputMode\nHW/SW: ${if (isHw) "HW" else "SW"}"
+                val descriptorInfo = afd?.let { descriptor ->
+                    val statSize = runCatching { descriptor.parcelFileDescriptor.statSize }.getOrDefault(-1L)
+                    "AFD startOffset: ${descriptor.startOffset} bytes\nAFD length: ${descriptor.length} bytes\nPFD statSize: $statSize bytes"
+                } ?: "AFD: no utilizado"
+                val diagnostics = "Archivo: $displayName\nTamaño: $fileSize bytes\nTipo: $mimeType\nURI: $uri\nEsquema: ${uri.scheme}\nEntrada LibVLC: $inputMode\n$descriptorInfo\nHW/SW: ${if (isHw) "HW" else "SW"}"
                 runOnUiThread {
                     if (isFinishing || isDestroyed || requestId != playbackRequestId.get()) {
                         preparedMedia.release()
@@ -1880,9 +1884,31 @@ class MainActivity : AppCompatActivity() {
                         Log.d("MPM_PLAYER", diagnostics)
                         currentAssetDescriptor = afd
                         afd = null
-                        mediaPlayer?.media = preparedMedia
+                        val player = mediaPlayer ?: throw IllegalStateException("MediaPlayer no está disponible")
+                        player.media = preparedMedia
                         preparedMedia.release()
-                        mediaPlayer?.play()
+                        val playResult = player.play()
+                        val runtimeSnapshots = mutableListOf<String>()
+                        fun runtimeSnapshot(stage: String): String {
+                            val activePlayer = mediaPlayer
+                            val activeMedia = activePlayer?.media
+                            val videoTracks = runCatching { activePlayer?.videoTracks?.size ?: 0 }.getOrDefault(-1)
+                            val audioTracks = runCatching { activePlayer?.audioTracks?.size ?: 0 }.getOrDefault(-1)
+                            val mediaState = runCatching { activeMedia?.state?.toString() ?: "null" }.getOrDefault("no disponible")
+                            val seekable = runCatching { activePlayer?.isSeekable?.toString() ?: "null" }.getOrDefault("no disponible")
+                            val attached = runCatching { activePlayer?.getVLCVout()?.areViewsAttached()?.toString() ?: "null" }.getOrDefault("no disponible")
+                            return "[$stage] play()=$playResult, isPlaying=${activePlayer?.isPlaying}, mediaState=$mediaState, length=${activePlayer?.length}, time=${activePlayer?.time}, seekable=$seekable, videoTracks=$videoTracks, audioTracks=$audioTracks, viewsAttached=$attached, videoLayout=${videoLayout.width}x${videoLayout.height}, laidOut=${videoLayout.isLaidOut}"
+                        }
+                        Log.e("MPM_PLAY_TRACE", runtimeSnapshot("inmediato").also { runtimeSnapshots.add(it) })
+                        listOf(1000L, 4000L, 10000L).forEach { delay ->
+                            handler.postDelayed({
+                                if (requestId == playbackRequestId.get()) {
+                                    val snapshot = runtimeSnapshot("${delay}ms")
+                                    runtimeSnapshots.add(snapshot)
+                                    Log.e("MPM_PLAY_TRACE", snapshot)
+                                }
+                            }, delay)
+                        }
                         if (startPos > 0L) {
                             handler.postDelayed({
                                 if (requestId == playbackRequestId.get()) mediaPlayer?.time = startPos
@@ -1894,7 +1920,9 @@ class MainActivity : AppCompatActivity() {
                                 isPreparingPlayback = false
                                 val report = playbackDiagnostics +
                                     "\n\nNo se recibió confirmación de reproducción en 20 segundos." +
-                                    "\nEventos VLC: " + playbackEvents.joinToString(" → ")
+                                    "\nResultado de play(): $playResult" +
+                                    "\n\nEstado del reproductor:\n" + runtimeSnapshots.joinToString("\n") +
+                                    "\n\nEventos VLC: " + playbackEvents.joinToString(" → ")
                                 txtStatus.text = "No se pudo iniciar el vídeo"
                                 Log.e("MPM_PLAYER", report)
                                 MaterialAlertDialogBuilder(this)
