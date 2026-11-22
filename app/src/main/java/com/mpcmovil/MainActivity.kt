@@ -1727,7 +1727,7 @@ class MainActivity : AppCompatActivity() {
                 MediaPlayer.Event.EncounteredError -> {
                     isPreparingPlayback = false
                     txtStatus.text = "Error al abrir"
-                    val report = playbackDiagnostics + "\n\nEventos VLC: " + playbackEvents.joinToString(" → ")
+                    val report = playbackDiagnostics + "\n\nEventos VLC: " + playbackEvents.joinToString(" → ") + "\n\nComprueba que el archivo sea accesible y que su formato/códec sea compatible."
                     Log.e("MPM_PLAYER", report)
                     MaterialAlertDialogBuilder(this)
                         .setTitle("Diagnóstico de reproducción")
@@ -1869,7 +1869,9 @@ class MainActivity : AppCompatActivity() {
                     try {
                         playbackDiagnostics = diagnostics
                         Log.d("MPM_PLAYER", diagnostics)
-                        mediaPlayer?.play(preparedMedia)
+                        mediaPlayer?.media = preparedMedia
+                        preparedMedia.release()
+                        mediaPlayer?.play()
                         if (startPos > 0L) {
                             handler.postDelayed({
                                 if (requestId == playbackRequestId.get()) mediaPlayer?.time = startPos
