@@ -1,6 +1,7 @@
 package com.mpcmovil
 
-import android.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import androidx.appcompat.app.AlertDialog
 import android.content.Intent
 import android.content.res.AssetFileDescriptor
 import android.media.MediaMetadataRetriever
@@ -222,17 +223,17 @@ class MainActivity : AppCompatActivity() {
                 orientation = LinearLayout.HORIZONTAL; gravity = android.view.Gravity.CENTER_VERTICAL
                 setPadding(dp(14), 0, dp(14), 0)
                 background = android.graphics.drawable.GradientDrawable().apply {
-                    setColor(if (selected) 0xFF3A281D.toInt() else 0xFF202936.toInt())
+                    setColor(if (selected) 0xFF263B4C.toInt() else 0xFF202936.toInt())
                     cornerRadius = dp(12).toFloat()
                 }
                 isClickable = true; isFocusable = true; setOnClickListener { action() }
             }
             val labelView = TextView(this).apply {
-                text = label; textSize = 14f; setTextColor(if (selected) 0xFFFF8738.toInt() else 0xFFF1F4F8.toInt())
+                text = label; textSize = 14f; setTextColor(if (selected) 0xFF78A9D2.toInt() else 0xFFF1F4F8.toInt())
             }
             item.addView(labelView, LinearLayout.LayoutParams(0, -1, 1f))
             if (selected) item.addView(TextView(this).apply {
-                text = "✓"; textSize = 18f; setTextColor(0xFFFF6A00.toInt()); gravity = android.view.Gravity.CENTER
+                text = "✓"; textSize = 18f; setTextColor(0xFF78A9D2.toInt()); gravity = android.view.Gravity.CENTER
             }, LinearLayout.LayoutParams(dp(28), -1))
             body.addView(item, LinearLayout.LayoutParams(-1, dp(50)).apply { bottomMargin = dp(7) })
         }
@@ -275,9 +276,9 @@ class MainActivity : AppCompatActivity() {
                     text = if (tabName == "Subs") "SUBTÍTULOS" else "AUDIO"
                     gravity = android.view.Gravity.CENTER
                     textSize = 12f; setTypeface(null, android.graphics.Typeface.BOLD)
-                    setTextColor(if (active) 0xFFFF8738.toInt() else 0xFF9BA8B8.toInt())
+                    setTextColor(if (active) 0xFF78A9D2.toInt() else 0xFF9BA8B8.toInt())
                     background = android.graphics.drawable.GradientDrawable().apply {
-                        setColor(if (active) 0xFF3A281D.toInt() else 0xFF202936.toInt())
+                        setColor(if (active) 0xFF263B4C.toInt() else 0xFF202936.toInt())
                         cornerRadius = dp(10).toFloat()
                     }
                     setOnClickListener { render(tabName) }
@@ -324,7 +325,7 @@ class MainActivity : AppCompatActivity() {
         }, LinearLayout.LayoutParams(-1, dp(48)))
         val value = TextView(this).apply {
             gravity = android.view.Gravity.CENTER
-            textSize = 25f; setTextColor(0xFFFF8738.toInt())
+            textSize = 25f; setTextColor(0xFF78A9D2.toInt())
         }
         fun refreshValue() {
             val micros = mediaPlayer?.getSpuDelay() ?: 0L
@@ -347,7 +348,7 @@ class MainActivity : AppCompatActivity() {
         root.addView(controls, LinearLayout.LayoutParams(-1, dp(54)))
         val reset = TextView(this).apply {
             text = "RESTABLECER"; gravity = android.view.Gravity.CENTER
-            setTextColor(0xFFFF8A3D.toInt()); textSize = 12f
+            setTextColor(0xFF78A9D2.toInt()); textSize = 12f
             setOnClickListener { mediaPlayer?.setSpuDelay(0L); refreshValue() }
         }
         root.addView(reset, LinearLayout.LayoutParams(-1, dp(46)))
@@ -369,7 +370,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showImagePanel() {
         val items = arrayOf("Relación de aspecto", "Cambiar orientación", "Rellenar pantalla", "Alternar video bajo notch")
-        AlertDialog.Builder(this).setTitle("Imagen y pantalla").setItems(items) { _, which ->
+        MaterialAlertDialogBuilder(this).setTitle("Imagen y pantalla").setItems(items) { _, which ->
             when (which) {
                 0 -> showAspectMenu()
                 1 -> cycleRotation()
@@ -386,7 +387,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showPlaybackTools() {
         val items = arrayOf("Ir a un tiempo…", "Temporizador de apagado", "Marcar punto A", "Marcar punto B y repetir", "Desactivar repetición A-B", "Velocidad", "Modo de reproducción: ${playbackModeLabel()}")
-        AlertDialog.Builder(this).setTitle("Herramientas de reproducción").setItems(items) { _, which ->
+        MaterialAlertDialogBuilder(this).setTitle("Herramientas de reproducción").setItems(items) { _, which ->
             when (which) {
                 0 -> showJumpToTime()
                 1 -> showSleepTimer()
@@ -420,7 +421,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showPlaybackModeMenu() {
         val labels = arrayOf("Normal", "Repetir toda la lista", "Repetir el vídeo actual", "Aleatorio")
-        AlertDialog.Builder(this).setTitle("Modo de reproducción")
+        MaterialAlertDialogBuilder(this).setTitle("Modo de reproducción")
             .setSingleChoiceItems(labels, playbackMode) { dialog, which ->
                 playbackMode = which
                 getSharedPreferences("mpm_player", MODE_PRIVATE).edit()
@@ -433,7 +434,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showSpeedMenu() {
         val labels = speeds.map { it.toString() + "×" }.toTypedArray()
-        AlertDialog.Builder(this).setTitle("Velocidad")
+        MaterialAlertDialogBuilder(this).setTitle("Velocidad")
             .setSingleChoiceItems(labels, speedIndex) { d, which ->
                 speedIndex = which
                 val value = speeds[which]
@@ -446,7 +447,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showJumpToTime() {
         val field = EditText(this).apply { hint = "HH:MM:SS o segundos;"; setSingleLine(true) }
-        AlertDialog.Builder(this).setTitle("Ir a un tiempo")
+        MaterialAlertDialogBuilder(this).setTitle("Ir a un tiempo")
             .setMessage("Ejemplo: 00:12:30")
             .setView(field)
             .setPositiveButton("Ir") { _, _ ->
@@ -470,7 +471,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showSleepTimer() {
         val choices = arrayOf("15 minutos", "30 minutos", "45 minutos", "60 minutos", "Cancelar temporizador")
-        AlertDialog.Builder(this).setTitle("Temporizador").setItems(choices) { _, which ->
+        MaterialAlertDialogBuilder(this).setTitle("Temporizador").setItems(choices) { _, which ->
             sleepTimerRunnable?.let { handler.removeCallbacks(it) }
             sleepTimerRunnable = null
             if (which == 4) showOsd("Temporizador cancelado")
@@ -516,7 +517,7 @@ class MainActivity : AppCompatActivity() {
         root.addView(TextView(this).apply {
             text = "MPM PLAYER  ·  CONFIGURACIÓN"
             textSize = 10f; letterSpacing = 0.12f
-            setTextColor(0xFFFF8738.toInt())
+            setTextColor(0xFF78A9D2.toInt())
             setTypeface(null, android.graphics.Typeface.BOLD)
             setPadding(dp(4), dp(4), 0, dp(14))
         })
@@ -529,7 +530,7 @@ class MainActivity : AppCompatActivity() {
             items.addView(TextView(this).apply {
                 text = label.uppercase(Locale.getDefault())
                 textSize = 10f; letterSpacing = 0.1f
-                setTextColor(0xFFFF8738.toInt())
+                setTextColor(0xFF78A9D2.toInt())
                 setTypeface(null, android.graphics.Typeface.BOLD)
                 setPadding(dp(4), dp(12), 0, dp(8))
             }, LinearLayout.LayoutParams(-1, dp(34)))
@@ -562,7 +563,7 @@ class MainActivity : AppCompatActivity() {
             row.addView(labels, LinearLayout.LayoutParams(0, -2, 1f))
             row.addView(TextView(this).apply {
                 text = "›"; textSize = 25f; gravity = android.view.Gravity.CENTER
-                setTextColor(0xFFFF8738.toInt())
+                setTextColor(0xFF78A9D2.toInt())
             }, LinearLayout.LayoutParams(dp(24), dp(42)))
             items.addView(row, LinearLayout.LayoutParams(-1, dp(64)).apply {
                 bottomMargin = dp(7)
@@ -676,7 +677,7 @@ class MainActivity : AppCompatActivity() {
                     text = "▣"
                     textSize = 22f
                     gravity = android.view.Gravity.CENTER
-                    setTextColor(0xFFFF8738.toInt())
+                    setTextColor(0xFF78A9D2.toInt())
                 }
                 row.addView(icon, LinearLayout.LayoutParams(dp(42), dp(48)))
                 val labels = LinearLayout(this@MainActivity).apply {
@@ -710,7 +711,7 @@ class MainActivity : AppCompatActivity() {
         root.addView(empty, LinearLayout.LayoutParams(-1, dp(300)))
         listView.emptyView = empty
 
-        val dialog = AlertDialog.Builder(this)
+        val dialog = MaterialAlertDialogBuilder(this)
             .setTitle("Reproductor de red compatible")
             .setView(root)
             .setNeutralButton("Desconectar") { _, _ -> disconnectRenderer() }
@@ -1017,7 +1018,7 @@ class MainActivity : AppCompatActivity() {
             "Herramientas de reproducción" to { showPlaybackTools() },
             "Ajustes" to { showPlayerSettings() },
             "Acerca de MPM Player" to {
-                AlertDialog.Builder(this).setTitle("MPM Player")
+                MaterialAlertDialogBuilder(this).setTitle("MPM Player")
                     .setMessage("Reproductor multimedia para Android")
                     .setPositiveButton("Aceptar", null).show()
             }
@@ -1084,7 +1085,7 @@ class MainActivity : AppCompatActivity() {
                 items += "Abrir favoritos" to { showFavorites() }
             }
             "Ayuda" -> items += "Acerca de MPM Player" to {
-                AlertDialog.Builder(this).setTitle("MPM Player")
+                MaterialAlertDialogBuilder(this).setTitle("MPM Player")
                     .setMessage("Reproductor multimedia para Android.\\n\\nUsa Archivo para abrir videos y subtítulos, Ver para ajustar la pantalla, y Reproducir o Navegar para controlar la reproducción.")
                     .setPositiveButton("Aceptar", null).show()
             }
@@ -1106,7 +1107,7 @@ class MainActivity : AppCompatActivity() {
         }
         panel.addView(TextView(this).apply {
             text = heading
-            setTextColor(0xFFFF8738.toInt())
+            setTextColor(0xFF78A9D2.toInt())
             textSize = 11f
             letterSpacing = 0.12f
             setTypeface(null, android.graphics.Typeface.BOLD)
@@ -1369,7 +1370,7 @@ class MainActivity : AppCompatActivity() {
             text = "▶"
             gravity = android.view.Gravity.CENTER
             textSize = 30f
-            setTextColor(0xFFFF8738.toInt())
+            setTextColor(0xFF78A9D2.toInt())
         }, LinearLayout.LayoutParams(-1, dp(48)))
         panel.addView(TextView(this).apply {
             text = message
@@ -1464,7 +1465,7 @@ class MainActivity : AppCompatActivity() {
         ids.forEach { id ->
             val selected = id == active
             findViewById<Button>(id).apply {
-                setTextColor(if (selected) 0xFFFF8738.toInt() else 0xFFAAB3C0.toInt())
+                setTextColor(if (selected) 0xFF78A9D2.toInt() else 0xFFAAB3C0.toInt())
                 background = android.graphics.drawable.GradientDrawable().apply {
                     setColor(if (selected) 0xFF30251F.toInt() else 0x00000000)
                     cornerRadius = dp(18).toFloat()
@@ -1478,7 +1479,7 @@ class MainActivity : AppCompatActivity() {
                     text = "‹   Todas las carpetas"
                     textSize = 13f
                     setTypeface(null, android.graphics.Typeface.BOLD)
-                    setTextColor(0xFFFF8738.toInt())
+                    setTextColor(0xFF78A9D2.toInt())
                     setPadding(dp(8), dp(10), 0, dp(15))
                     setOnClickListener { selectedFolder = ""; renderLibrary("Carpetas") }
                 })
@@ -1500,7 +1501,7 @@ class MainActivity : AppCompatActivity() {
                         setOnClickListener { selectedFolder = folder; renderLibrary("Carpetas") }
                     }
                     row.addView(TextView(this).apply {
-                        text = "▰"; textSize = 22f; setTextColor(0xFFFF8738.toInt())
+                        text = "▰"; textSize = 22f; setTextColor(0xFF78A9D2.toInt())
                         gravity = android.view.Gravity.CENTER
                     }, LinearLayout.LayoutParams(dp(38), dp(42)))
                     val details = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(10), 0, 0, 0) }
@@ -1589,7 +1590,7 @@ class MainActivity : AppCompatActivity() {
         row.addView(info, LinearLayout.LayoutParams(0, -2, 1f))
         row.setOnClickListener { playlist.clear(); playlist.add(video.uri); playlistIndex = 0; play(video.uri) }
         row.setOnLongClickListener {
-            AlertDialog.Builder(this).setTitle(video.name).setItems(arrayOf("Reproducir", "Añadir a favoritos", "Información")) { _, which ->
+            MaterialAlertDialogBuilder(this).setTitle(video.name).setItems(arrayOf("Reproducir", "Añadir a favoritos", "Información")) { _, which ->
                 when (which) {
                     0 -> { playlist.clear(); playlist.add(video.uri); playlistIndex = 0; play(video.uri) }
                     1 -> {
@@ -1729,7 +1730,7 @@ class MainActivity : AppCompatActivity() {
                     txtStatus.text = "Error al abrir"
                     val report = playbackDiagnostics + "\n\nEventos VLC: " + playbackEvents.joinToString(" → ")
                     Log.e("MPM_PLAYER", report)
-                    AlertDialog.Builder(this)
+                    MaterialAlertDialogBuilder(this)
                         .setTitle("Diagnóstico de reproducción")
                         .setMessage(report)
                         .setPositiveButton("Cerrar", null)
@@ -1766,7 +1767,7 @@ class MainActivity : AppCompatActivity() {
             Log.e("MPM_PLAY_TRACE", "after getPlaybackProgress saved=$saved")
             if (saved > 10_000L) {
                 val name = getDisplayName(uri)
-                AlertDialog.Builder(this)
+                MaterialAlertDialogBuilder(this)
                     .setTitle("Continuar reproducción")
                     .setMessage("¿Quieres continuar ${name} desde ${formatTime(saved)} o empezar desde el principio?")
                     .setPositiveButton("Continuar") { _, _ -> play(uri, saved) }
@@ -1802,7 +1803,7 @@ class MainActivity : AppCompatActivity() {
                         isPreparingPlayback = false
                         Log.e("MPM_PLAYER", "Error al asociar la superficie de vídeo", attachError)
                         txtStatus.text = "No se pudo preparar la pantalla de vídeo"
-                        AlertDialog.Builder(this)
+                        MaterialAlertDialogBuilder(this)
                             .setTitle("Error de salida de vídeo")
                             .setMessage(attachError.message ?: attachError.javaClass.simpleName)
                             .setPositiveButton("Cerrar", null).show()
@@ -1889,7 +1890,7 @@ class MainActivity : AppCompatActivity() {
                         playbackDiagnostics = "Excepción: ${playError.javaClass.name}\nMensaje: ${playError.message}\nURI: $uri"
                         Log.e("MPM_PLAYER", playbackDiagnostics, playError)
                         txtStatus.text = "No se pudo abrir el archivo"
-                        AlertDialog.Builder(this).setTitle("Error al abrir archivo")
+                        MaterialAlertDialogBuilder(this).setTitle("Error al abrir archivo")
                             .setMessage(playbackDiagnostics).setPositiveButton("Cerrar", null).show()
                     }
                 }
@@ -1904,7 +1905,7 @@ class MainActivity : AppCompatActivity() {
                         playbackDiagnostics = "Excepción: ${e.javaClass.name}\nMensaje: ${e.message}\nURI: $uri"
                         Log.e("MPM_PLAYER", playbackDiagnostics, e)
                         txtStatus.text = "No se pudo abrir el archivo"
-                        AlertDialog.Builder(this).setTitle("Error al abrir archivo")
+                        MaterialAlertDialogBuilder(this).setTitle("Error al abrir archivo")
                             .setMessage(playbackDiagnostics).setPositiveButton("Cerrar", null).show()
                     }
                 }
@@ -1997,7 +1998,7 @@ class MainActivity : AppCompatActivity() {
         val favorites = getSharedPreferences("mpm_player", MODE_PRIVATE)
             .getStringSet("favorites", emptySet())?.toList().orEmpty()
         if (favorites.isEmpty()) {
-            AlertDialog.Builder(this).setTitle("Favoritos")
+            MaterialAlertDialogBuilder(this).setTitle("Favoritos")
                 .setMessage("Todavía no has guardado videos")
                 .setPositiveButton("Aceptar", null).show()
             return
@@ -2082,7 +2083,7 @@ class MainActivity : AppCompatActivity() {
                 return row
             }
         }
-        AlertDialog.Builder(this).setTitle("Videos favoritos")
+        MaterialAlertDialogBuilder(this).setTitle("Videos favoritos")
             .setSingleChoiceItems(adapter, 0) { _, which -> selected = which.coerceIn(favorites.indices) }
             .setPositiveButton("Abrir") { _, _ ->
                 favorites.getOrNull(selected)?.let { value ->
@@ -2167,7 +2168,7 @@ class MainActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 Log.e("MPM_PLAYER", "Error al cargar subtítulo externo", e)
                 runOnUiThread {
-                    AlertDialog.Builder(this).setTitle("Error de subtítulos")
+                    MaterialAlertDialogBuilder(this).setTitle("Error de subtítulos")
                         .setMessage(e.message ?: "No se pudo cargar el archivo")
                         .setPositiveButton("Aceptar", null).show()
                 }
@@ -2299,7 +2300,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showAspectMenu() {
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle("Relación de aspecto")
             .setSingleChoiceItems(aspects, aspectIndex) { dialog, which ->
                 applyAspect(which)
@@ -2316,7 +2317,7 @@ class MainActivity : AppCompatActivity() {
         val cur = mediaPlayer?.audioTrack ?: -1
         val sel = tracks.indexOfFirst { it.id == cur }.coerceAtLeast(0)
 
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle("Audio (MPM Player)")
             .setSingleChoiceItems(names, sel) { d, i ->
                 mediaPlayer?.audioTrack = tracks[i].id
@@ -2335,7 +2336,7 @@ class MainActivity : AppCompatActivity() {
             val index = tracks.indexOfFirst { it.id == current }
             if (index < 0) 1 else index + 2
         }
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle("Subtítulos · VLC")
             .setSingleChoiceItems(options.toTypedArray(), selected) { dialog, which ->
                 when (which) {
@@ -2448,7 +2449,7 @@ class MainActivity : AppCompatActivity() {
         val labels = arrayOf("5 segundos", "10 segundos", "15 segundos", "30 segundos")
         val values = intArrayOf(5, 10, 15, 30)
         val selected = values.indexOf(seekIntervalSeconds).coerceAtLeast(0)
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle("Intervalo de doble toque")
             .setSingleChoiceItems(labels, selected) { dialog, which ->
                 seekIntervalSeconds = values[which]
@@ -2472,18 +2473,18 @@ class MainActivity : AppCompatActivity() {
               }
               private fun showRecentFiles() {
                   val recent = getSharedPreferences("mpm_player", MODE_PRIVATE).getStringSet("recent_files", emptySet())?.toList().orEmpty()
-                  if (recent.isEmpty()) { AlertDialog.Builder(this).setTitle("Archivos recientes").setMessage("Todavía no hay archivos recientes.").setPositiveButton("Aceptar", null).show(); return }
+                  if (recent.isEmpty()) { MaterialAlertDialogBuilder(this).setTitle("Archivos recientes").setMessage("Todavía no hay archivos recientes.").setPositiveButton("Aceptar", null).show(); return }
                   val orderedSaved = getSharedPreferences("mpm_player", MODE_PRIVATE)
                       .getString("recent_files_ordered", "")?.split("\\n")?.filter { it.isNotBlank() }.orEmpty()
                   val ordered = (orderedSaved + recent).distinct().filter { recent.contains(it) }
-                  AlertDialog.Builder(this).setTitle("Archivos recientes").setItems(ordered.map { getDisplayName(Uri.parse(it)) }.toTypedArray()) { _, which ->
+                  MaterialAlertDialogBuilder(this).setTitle("Archivos recientes").setItems(ordered.map { getDisplayName(Uri.parse(it)) }.toTypedArray()) { _, which ->
                       val uri = Uri.parse(ordered[which]); playlist.clear(); playlist.add(uri); playlistIndex = 0; play(uri)
                   }.setNegativeButton("Cerrar", null).show()
               }
               private fun showPlaylist() {
-                  if (playlist.isEmpty()) { AlertDialog.Builder(this).setTitle("Lista de reproducción").setMessage("Selecciona varios videos desde Archivo > Abrir video para crear una lista.").setPositiveButton("Aceptar", null).show(); return }
+                  if (playlist.isEmpty()) { MaterialAlertDialogBuilder(this).setTitle("Lista de reproducción").setMessage("Selecciona varios videos desde Archivo > Abrir video para crear una lista.").setPositiveButton("Aceptar", null).show(); return }
                   val names = playlist.mapIndexed { index, uri -> (if (index == playlistIndex) "▶  " else "") + getDisplayName(uri) }.toTypedArray()
-                  AlertDialog.Builder(this).setTitle("Lista de reproducción (" + playlist.size + ")").setItems(names) { _, which ->
+                  MaterialAlertDialogBuilder(this).setTitle("Lista de reproducción (" + playlist.size + ")").setItems(names) { _, which ->
                       playlistIndex = which; play(playlist[which], 0L)
                   }.setNegativeButton("Cerrar", null).show()
               }
@@ -2503,7 +2504,7 @@ class MainActivity : AppCompatActivity() {
                               details.append("Bitrate: ").append(meta(MediaMetadataRetriever.METADATA_KEY_BITRATE)).append(" bps")
                           } finally { retriever.release() }
                       } catch (e: Exception) { details.append("No se pudo leer toda la información del medio.\n").append(e.message ?: "Error desconocido") }
-                      runOnUiThread { AlertDialog.Builder(this).setTitle("Información del medio").setMessage(details.toString()).setPositiveButton("Cerrar", null).show() }
+                      runOnUiThread { MaterialAlertDialogBuilder(this).setTitle("Información del medio").setMessage(details.toString()).setPositiveButton("Cerrar", null).show() }
                   }.start()
               }
 
