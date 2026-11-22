@@ -1648,7 +1648,6 @@ class MainActivity : AppCompatActivity() {
             Log.d("MPM_PLAYER", "VLC event: $eventName")
             when (eventType) {
                 MediaPlayer.Event.Opening -> {
-                    isPreparingPlayback = false
                     txtStatus.text = "Abriendo vídeo…"
                 }
                 MediaPlayer.Event.Playing -> {
@@ -1856,36 +1855,44 @@ class MainActivity : AppCompatActivity() {
                     Log.w("MPM_PLAYER", "No se pudieron consultar los metadatos del archivo", queryError)
                 }
                 val activeVlc = libVLC ?: throw IllegalStateException("El motor VLC no está disponible")
-                val openedAfd = contentResolver.openAssetFileDescriptor(uri, "r")
-                    ?: throw IllegalStateException("Android no pudo abrir el descriptor del archivo")
-                afd = openedAfd
-                val preparedMedia = Media(activeVlc, openedAfd)
+                // Let LibVLC resolve SAF/content URIs itself instead of wrapping them
+                // in an AssetFileDescriptor, which can stall on some document providers.
+                val preparedMedia = Media(activeVlc, uri)
                 media = preparedMedia
                 preparedMedia.addOption(":file-caching=2000")
-
-                val preparedAfd = openedAfd
                 val diagnostics = "Archivo: $displayName\nTamaño: $fileSize bytes\nTipo: $mimeType\nURI: $uri\nEsquema: ${uri.scheme}\nHW/SW: ${if (isHw) "HW" else "SW"}"
                 runOnUiThread {
                     if (isFinishing || isDestroyed || requestId != playbackRequestId.get()) {
                         preparedMedia.release()
-                        try { preparedAfd.close() } catch (_: Exception) {}
                         return@runOnUiThread
                     }
                     try {
                         playbackDiagnostics = diagnostics
                         Log.d("MPM_PLAYER", diagnostics)
-                        currentAssetDescriptor = preparedAfd
-                        mediaPlayer?.media = preparedMedia
-                        preparedMedia.release()
-                        mediaPlayer?.play()
+                        mediaPlayer?.play(preparedMedia)
                         if (startPos > 0L) {
                             handler.postDelayed({
                                 if (requestId == playbackRequestId.get()) mediaPlayer?.time = startPos
-                            }, 500L)
+                            }, 900L)
                         }
+                        handler.postDelayed({
+                            if (requestId == playbackRequestId.get() &&
+                                isPreparingPlayback && mediaPlayer?.isPlaying != true) {
+                                isPreparingPlayback = false
+                                val report = playbackDiagnostics +
+                                    "\n\nNo se recibió confirmación de reproducción en 20 segundos." +
+                                    "\nEventos VLC: " + playbackEvents.joinToString(" → ")
+                                txtStatus.text = "No se pudo iniciar el vídeo"
+                                Log.e("MPM_PLAYER", report)
+                                MaterialAlertDialogBuilder(this)
+                                    .setTitle("La reproducción no pudo iniciarse")
+                                    .setMessage(report)
+                                    .setPositiveButton("Cerrar", null)
+                                    .show()
+                            }
+                        }, 20_000L)
                     } catch (playError: Exception) {
                         try { preparedMedia.release() } catch (_: Exception) {}
-                        releaseCurrentAssetDescriptor()
                         isPreparingPlayback = false
                         playbackDiagnostics = "Excepción: ${playError.javaClass.name}\nMensaje: ${playError.message}\nURI: $uri"
                         Log.e("MPM_PLAYER", playbackDiagnostics, playError)
@@ -1894,7 +1901,6 @@ class MainActivity : AppCompatActivity() {
                             .setMessage(playbackDiagnostics).setPositiveButton("Cerrar", null).show()
                     }
                 }
-                afd = null
                 media = null
             } catch (e: Exception) {
                 try { media?.release() } catch (_: Exception) {}
