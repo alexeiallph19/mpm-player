@@ -6,7 +6,7 @@ permissions:
 on:
   workflow_dispatch:
   push:
-    branches: ["desarrollo/interfaz-mpc"]
+    branches: ["desarrollo/interfaz-mpc", "redisenio/mpc-hc-android"]
 
 jobs:
   build:
