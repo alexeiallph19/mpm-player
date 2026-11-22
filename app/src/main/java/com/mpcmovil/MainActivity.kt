@@ -1855,20 +1855,31 @@ class MainActivity : AppCompatActivity() {
                     Log.w("MPM_PLAYER", "No se pudieron consultar los metadatos del archivo", queryError)
                 }
                 val activeVlc = libVLC ?: throw IllegalStateException("El motor VLC no está disponible")
-                // Let LibVLC resolve SAF/content URIs itself instead of wrapping them
-                // in an AssetFileDescriptor, which can stall on some document providers.
-                val preparedMedia = Media(activeVlc, uri)
+                // Android content:// URIs must be opened through ContentResolver.
+                // Pass the resulting descriptor to LibVLC and keep it alive during playback.
+                val preparedMedia = if (uri.scheme == "content") {
+                    afd = contentResolver.openAssetFileDescriptor(uri, "r")
+                        ?: throw IllegalStateException("Android no pudo abrir el descriptor del vídeo")
+                    Media(activeVlc, afd!!)
+                } else {
+                    Media(activeVlc, uri)
+                }
                 media = preparedMedia
                 preparedMedia.addOption(":file-caching=2000")
-                val diagnostics = "Archivo: $displayName\nTamaño: $fileSize bytes\nTipo: $mimeType\nURI: $uri\nEsquema: ${uri.scheme}\nHW/SW: ${if (isHw) "HW" else "SW"}"
+                val inputMode = if (uri.scheme == "content") "AssetFileDescriptor" else "URI directa"
+                val diagnostics = "Archivo: $displayName\nTamaño: $fileSize bytes\nTipo: $mimeType\nURI: $uri\nEsquema: ${uri.scheme}\nEntrada LibVLC: $inputMode\nHW/SW: ${if (isHw) "HW" else "SW"}"
                 runOnUiThread {
                     if (isFinishing || isDestroyed || requestId != playbackRequestId.get()) {
                         preparedMedia.release()
+                        try { afd?.close() } catch (_: Exception) {}
+                        afd = null
                         return@runOnUiThread
                     }
                     try {
                         playbackDiagnostics = diagnostics
                         Log.d("MPM_PLAYER", diagnostics)
+                        currentAssetDescriptor = afd
+                        afd = null
                         mediaPlayer?.media = preparedMedia
                         preparedMedia.release()
                         mediaPlayer?.play()
@@ -1895,6 +1906,9 @@ class MainActivity : AppCompatActivity() {
                         }, 20_000L)
                     } catch (playError: Exception) {
                         try { preparedMedia.release() } catch (_: Exception) {}
+                        releaseCurrentAssetDescriptor()
+                        try { afd?.close() } catch (_: Exception) {}
+                        afd = null
                         isPreparingPlayback = false
                         playbackDiagnostics = "Excepción: ${playError.javaClass.name}\nMensaje: ${playError.message}\nURI: $uri"
                         Log.e("MPM_PLAYER", playbackDiagnostics, playError)
