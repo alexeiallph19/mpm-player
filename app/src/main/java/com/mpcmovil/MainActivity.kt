@@ -1569,7 +1569,7 @@ class MainActivity : AppCompatActivity() {
             layoutParams = android.widget.FrameLayout.LayoutParams(-1, -1)
             scaleType = ImageView.ScaleType.CENTER_CROP
             setBackgroundColor(0xFF303030.toInt())
-            setImageResource(android.R.drawable.ic_media_play)
+            setImageResource(R.drawable.mpm_ic_play)
         }
         thumbFrame.addView(thumb)
         thumbFrame.addView(TextView(this).apply {
@@ -1673,9 +1673,9 @@ class MainActivity : AppCompatActivity() {
                     isLibraryVisible = false
                     welcomeScreen.visibility = View.GONE
                     txtStatus.text = currentUri?.let { getPlayerTitle(it) } ?: "Reproduciendo"
-                    btnPlay.setImageResource(android.R.drawable.ic_media_pause)
+                    btnPlay.setImageResource(R.drawable.mpm_ic_pause)
                     btnPlay.contentDescription = "Pausar"
-                    btnCenterPlay.setImageResource(android.R.drawable.ic_media_play)
+                    btnCenterPlay.setImageResource(R.drawable.mpm_ic_play)
                     setControlsVisible(true)
                 }
                 MediaPlayer.Event.Paused -> {
@@ -1683,9 +1683,9 @@ class MainActivity : AppCompatActivity() {
                         setControlsVisible(false)
                     } else {
                     txtStatus.text = currentUri?.let { getPlayerTitle(it) } ?: "Pausa"
-                    btnPlay.setImageResource(android.R.drawable.ic_media_play)
+                    btnPlay.setImageResource(R.drawable.mpm_ic_play)
                     btnPlay.contentDescription = "Reproducir"
-                    btnCenterPlay.setImageResource(android.R.drawable.ic_media_play)
+                    btnCenterPlay.setImageResource(R.drawable.mpm_ic_play)
                     setControlsVisible(true)
                     }
                 }
@@ -1697,8 +1697,8 @@ class MainActivity : AppCompatActivity() {
                         welcomeScreen.visibility = View.VISIBLE
                         setControlsVisible(false)
                         txtStatus.text = "Detenido"
-                        btnPlay.setImageResource(android.R.drawable.ic_media_play)
-                        btnCenterPlay.setImageResource(android.R.drawable.ic_media_play)
+                        btnPlay.setImageResource(R.drawable.mpm_ic_play)
+                        btnCenterPlay.setImageResource(R.drawable.mpm_ic_play)
                     }
                 }
                 MediaPlayer.Event.TimeChanged -> {
