@@ -1165,7 +1165,9 @@ class MainActivity : AppCompatActivity() {
         bottomBar.visibility = state
         // VLC mantiene el control principal en la fila inferior, no como botón flotante duplicado.
         centerControls.visibility = View.GONE
-        btnScreenshotFloat.visibility = if (shouldShow && currentUri != null &&
+        val narrowPortrait = resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE &&
+            resources.displayMetrics.widthPixels / resources.displayMetrics.density < 390f
+        btnScreenshotFloat.visibility = if (shouldShow && !narrowPortrait && currentUri != null &&
             getSharedPreferences("mpm_player", MODE_PRIVATE).getBoolean("floating_screenshot", true)) View.VISIBLE else View.GONE
         handler.removeCallbacks(controlsHideRunnable)
         if (shouldShow && mediaPlayer?.isPlaying == true) handler.postDelayed(controlsHideRunnable, 3500L)
@@ -2597,6 +2599,16 @@ private fun showOsd(msg: String) {
         val m = (ms / 60000) % 60
         val h = ms / 3600000
         return String.format(Locale.US, "%02d:%02d:%02d", h, m, s)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        videoLayout.post {
+            if (!isFinishing && !isDestroyed) {
+                applyResponsiveControls()
+                setControlsVisible(isControlsVisible)
+            }
+        }
     }
 
     override fun onPause() {
