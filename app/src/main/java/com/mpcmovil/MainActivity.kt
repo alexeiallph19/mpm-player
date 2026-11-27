@@ -1174,40 +1174,52 @@ class MainActivity : AppCompatActivity() {
     private fun applyResponsiveControls() {
         val landscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
         val bottom = bottomBar as? LinearLayout ?: return
+        val densityWidth = resources.displayMetrics.widthPixels / resources.displayMetrics.density
+        val compactPortrait = !landscape && densityWidth < 390f
 
-        // Compact MPC-style controls: time, seekbar and transport controls stay close together.
-        bottom.setPadding(dp(if (landscape) 12 else 10), dp(if (landscape) 0 else 1),
-            dp(if (landscape) 12 else 10), dp(if (landscape) 0 else 1))
-        bottom.getChildAt(0)?.let { row ->
-            row.layoutParams = row.layoutParams.apply { height = dp(if (landscape) 13 else 18) }
-        }
-        seekBar.layoutParams = seekBar.layoutParams.apply { height = dp(if (landscape) 11 else 18) }
-        bottom.findViewById<View>(R.id.playerControlsRow)?.let { row ->
-            row.layoutParams = row.layoutParams.apply { height = dp(if (landscape) 30 else 40) }
-        }
-
-        val compactGroups = if (landscape) listOf(
-            R.id.playerControlsLeft to intArrayOf(32, 32),
-            R.id.playerControlsCenter to intArrayOf(34, 38, 34),
-            R.id.playerControlsRight to intArrayOf(30, 30, 36, 30)
-        ) else listOf(
-            R.id.playerControlsLeft to intArrayOf(34, 34),
-            R.id.playerControlsCenter to intArrayOf(38, 46, 38),
-            R.id.playerControlsRight to intArrayOf(32, 32, 40, 32)
+        bottom.setPadding(
+            dp(if (landscape) 14 else 10), dp(if (landscape) 1 else 2),
+            dp(if (landscape) 14 else 10), dp(if (landscape) 2 else 3)
         )
-        compactGroups.forEach { (groupId, widths) ->
+        bottom.getChildAt(0)?.let { row ->
+            row.layoutParams = row.layoutParams.apply { height = dp(if (landscape) 18 else 20) }
+        }
+        seekBar.layoutParams = seekBar.layoutParams.apply { height = dp(if (landscape) 14 else 18) }
+        bottom.findViewById<View>(R.id.playerControlsRow)?.let { row ->
+            row.layoutParams = row.layoutParams.apply { height = dp(if (landscape) 38 else 42) }
+        }
+
+        // Keep each control group inside its own third of the row. On narrow
+        // portrait screens Cast stays available in the main menu, avoiding overlap.
+        val leftWidths = if (landscape) intArrayOf(34, 36) else intArrayOf(30, 32)
+        val centerWidths = if (landscape) intArrayOf(38, 44, 38) else intArrayOf(34, 40, 34)
+        val rightWidths = if (landscape) intArrayOf(34, 38, 42, 34) else intArrayOf(30, 0, 38, 30)
+        val groups = listOf(
+            R.id.playerControlsLeft to leftWidths,
+            R.id.playerControlsCenter to centerWidths,
+            R.id.playerControlsRight to rightWidths
+        )
+        groups.forEach { (groupId, widths) ->
             bottom.findViewById<LinearLayout>(groupId)?.let { group ->
                 widths.forEachIndexed { index, width ->
                     group.getChildAt(index)?.let { child ->
+                        child.visibility = if (width == 0) View.GONE else View.VISIBLE
                         child.layoutParams = child.layoutParams.apply {
                             this.width = dp(width)
-                            if (landscape) this.height = dp(30)
+                            this.height = dp(if (landscape) 36 else 38)
                         }
                     }
                 }
             }
         }
-        topBar.layoutParams = topBar.layoutParams.apply { height = dp(if (landscape) 70 else 76) }
+        // The floating screenshot action is intentionally hidden on narrow
+        // portrait layouts so it cannot cover the video or transport controls.
+        btnScreenshotFloat.visibility = if (
+            !compactPortrait && isControlsVisible && currentUri != null &&
+            getSharedPreferences("mpm_player", MODE_PRIVATE).getBoolean("floating_screenshot", true)
+        ) View.VISIBLE else View.GONE
+
+        topBar.layoutParams = topBar.layoutParams.apply { height = dp(if (landscape) 72 else 76) }
     }
 
     private fun togglePlayback() {
@@ -1919,7 +1931,7 @@ class MainActivity : AppCompatActivity() {
                                 isPreparingPlayback && mediaPlayer?.isPlaying != true) {
                                 isPreparingPlayback = false
                                 val report = playbackDiagnostics +
-                                    "\n\nNo se recibió confirmación de reproducción en 20 segundos." +
+                                    "\n\nLibVLC todavía no confirmó la reproducción después de 90 segundos." +
                                     "\nResultado de play(): $playResult" +
                                     "\n\nEstado del reproductor:\n" + runtimeSnapshots.joinToString("\n") +
                                     "\n\nEventos VLC: " + playbackEvents.joinToString(" → ")
@@ -1931,7 +1943,7 @@ class MainActivity : AppCompatActivity() {
                                     .setPositiveButton("Cerrar", null)
                                     .show()
                             }
-                        }, 20_000L)
+                        }, 90_000L)
                     } catch (playError: Exception) {
                         try { preparedMedia.release() } catch (_: Exception) {}
                         releaseCurrentAssetDescriptor()
