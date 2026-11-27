@@ -2699,25 +2699,88 @@ class MainActivity : AppCompatActivity() {
         dialog.window?.attributes = dialog.window?.attributes?.apply { dimAmount = 0.55f }
     }
 
-              private fun showMediaInfo() {
-                  val uri = currentUri ?: run { Toast.makeText(this, "Primero abre un archivo", Toast.LENGTH_SHORT).show(); return }
-                  Thread {
-                      val details = StringBuilder()
-                      try {
-                          val retriever = MediaMetadataRetriever()
-                          try {
-                              retriever.setDataSource(this, uri)
-                              fun meta(key: Int, fallback: String = "No disponible"): String = retriever.extractMetadata(key)?.takeIf { it.isNotBlank() } ?: fallback
-                              details.append("Archivo: ").append(getDisplayName(uri)).append("\n")
-                              details.append("Duración: ").append(formatTime(meta(MediaMetadataRetriever.METADATA_KEY_DURATION, "0").toLongOrNull() ?: 0L)).append("\n")
-                              details.append("Resolución: ").append(meta(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)).append(" × ").append(meta(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)).append("\n")
-                              details.append("Códecs: información no disponible en esta versión de Android\\n")
-                              details.append("Bitrate: ").append(meta(MediaMetadataRetriever.METADATA_KEY_BITRATE)).append(" bps")
-                          } finally { retriever.release() }
-                      } catch (e: Exception) { details.append("No se pudo leer toda la información del medio.\n").append(e.message ?: "Error desconocido") }
-                      runOnUiThread { MaterialAlertDialogBuilder(this).setTitle("Información del medio").setMessage(details.toString()).setPositiveButton("Cerrar", null).show() }
-                  }.start()
-              }
+    private fun showMediaInfo() {
+        val uri = currentUri ?: run {
+            Toast.makeText(this, "Primero abre un archivo", Toast.LENGTH_SHORT).show()
+            return
+        }
+        // Tomamos una instantánea de las pistas que LibVLC ya detectó durante la reproducción.
+        val activeMedia = mediaPlayer?.media
+        fun member(target: Any, name: String): Any? = runCatching {
+            target.javaClass.methods.firstOrNull { it.name == name && it.parameterTypes.isEmpty() }
+                ?.invoke(target)
+                ?: target.javaClass.fields.firstOrNull { it.name.equals(name.removePrefix("get").replaceFirstChar { c -> c.lowercase() }, true) }
+                    ?.get(target)
+        }.getOrNull()
+        fun value(target: Any, getter: String): String? =
+            member(target, getter)?.toString()?.takeIf { it.isNotBlank() && it != "0" }
+        fun codecName(target: Any): String {
+            val codec = member(target, "getCodec") as? Number ?: return "No disponible"
+            val description = runCatching {
+                MediaPlayer::class.java.methods.firstOrNull {
+                    it.name == "getCodecDescription" && it.parameterTypes.size == 1
+                }?.invoke(null, codec.toInt()) as? String
+            }.getOrNull()
+            if (!description.isNullOrBlank()) return description
+            val n = codec.toLong()
+            val fourcc = (0..3).map { ((n shr (it * 8)) and 0xff).toInt().toChar() }
+                .joinToString("").trim().filter { it.isLetterOrDigit() || it in " -_." }
+            return fourcc.ifBlank { "0x" + java.lang.Long.toHexString(n) }
+        }
+        val tracks = runCatching {
+            member(activeMedia ?: return@runCatching emptyList<Any>(), "getTracks")
+                ?.let { it as? Array<*> }?.filterNotNull() ?: emptyList()
+        }.getOrDefault(emptyList())
+        val video = tracks.firstOrNull { it.javaClass.simpleName.contains("VideoTrack", true) }
+        val audio = tracks.firstOrNull { it.javaClass.simpleName.contains("AudioTrack", true) }
+        val duration = mediaPlayer?.length?.takeIf { it > 0L }
+        Thread {
+            val details = StringBuilder()
+            details.append("ARCHIVO\n").append(getDisplayName(uri)).append("\n\n")
+            details.append("REPRODUCCIÓN\n")
+            details.append("Duración: ").append(duration?.let { formatTime(it) } ?: "No disponible").append("\n")
+            details.append("Estado: ").append(if (mediaPlayer?.isPlaying == true) "Reproduciendo" else "En pausa / preparando").append("\n")
+            details.append("Motor: LibVLC 3.7.7\n\n")
+            details.append("VÍDEO\n")
+            if (video != null) {
+                val width = value(video, "getWidth") ?: "?"
+                val height = value(video, "getHeight") ?: "?"
+                details.append("Códec: ").append(codecName(video)).append("\n")
+                details.append("Resolución: ").append(width).append(" × ").append(height).append("\n")
+                val fpsNum = value(video, "getFrameRateNum")?.toDoubleOrNull()
+                val fpsDen = value(video, "getFrameRateDen")?.toDoubleOrNull()
+                if (fpsNum != null && fpsDen != null && fpsDen > 0.0) {
+                    details.append("Frecuencia: ").append(String.format(Locale.US, "%.3f fps", fpsNum / fpsDen)).append("\n")
+                } else details.append("Frecuencia: No disponible\n")
+                details.append("Bitrate: ").append(value(video, "getBitrate")?.let { "$it bps" } ?: "No disponible").append("\n")
+            } else details.append("Pista de vídeo: todavía no detectada por LibVLC\n")
+            details.append("\nAUDIO\n")
+            if (audio != null) {
+                details.append("Códec: ").append(codecName(audio)).append("\n")
+                details.append("Canales: ").append(value(audio, "getChannels") ?: "No disponible").append("\n")
+                details.append("Frecuencia: ").append(value(audio, "getRate")?.let { "$it Hz" } ?: "No disponible").append("\n")
+                details.append("Bitrate: ").append(value(audio, "getBitrate")?.let { "$it bps" } ?: "No disponible").append("\n")
+            } else details.append("Pista de audio: todavía no detectada por LibVLC\n")
+            val metadata = runCatching {
+                val retriever = MediaMetadataRetriever()
+                try {
+                    retriever.setDataSource(this, uri)
+                    val size = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)
+                    if (!size.isNullOrBlank()) details.append("\nBITRATE DEL ARCHIVO\n").append(size).append(" bps")
+                } finally { retriever.release() }
+            }.isSuccess
+            if (!metadata) details.append("\n\nAlgunos metadatos del contenedor no están disponibles.")
+            runOnUiThread {
+                if (!isFinishing && !isDestroyed) {
+                    MaterialAlertDialogBuilder(this)
+                        .setTitle("Información del medio")
+                        .setMessage(details.toString())
+                        .setPositiveButton("Cerrar", null)
+                        .show()
+                }
+            }
+        }.start()
+    }
 
 private fun showOsd(msg: String) {
         txtOsd.text = msg
