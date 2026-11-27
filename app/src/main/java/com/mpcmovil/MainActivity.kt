@@ -2342,9 +2342,12 @@ class MainActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         videoLayout.post {
-            applyResponsiveControls()
-            videoLayout.requestLayout()
-            if (immersiveMode) enterImmersiveMode() else showSystemBars()
+            if (!isFinishing && !isDestroyed) {
+                applyResponsiveControls()
+                setControlsVisible(isControlsVisible)
+                videoLayout.requestLayout()
+                if (immersiveMode) enterImmersiveMode() else showSystemBars()
+            }
         }
     }
 
@@ -2743,16 +2746,6 @@ private fun showOsd(msg: String) {
         val m = (ms / 60000) % 60
         val h = ms / 3600000
         return String.format(Locale.US, "%02d:%02d:%02d", h, m, s)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        videoLayout.post {
-            if (!isFinishing && !isDestroyed) {
-                applyResponsiveControls()
-                setControlsVisible(isControlsVisible)
-            }
-        }
     }
 
     override fun onPause() {
