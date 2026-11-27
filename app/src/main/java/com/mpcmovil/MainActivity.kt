@@ -1011,6 +1011,7 @@ class MainActivity : AppCompatActivity() {
             "Favoritos" to { showFavorites() },
             "Guardar en favoritos" to { saveFavorite() },
             "Información del medio" to { showMediaInfo() },
+            "Estadísticas de reproducción" to { showStatisticsPanel() },
             "Relación de aspecto" to { showAspectMenu() },
             "Cambiar orientación" to { cycleRotation() },
             "Audio y subtítulos" to { showAudioSubsPanel("Audio") },
@@ -1035,6 +1036,7 @@ class MainActivity : AppCompatActivity() {
                 items += "Lista de reproducción" to { showPlaylist() }
                 items += "Archivos recientes" to { showRecentFiles() }
                 items += "Información del medio" to { showMediaInfo() }
+                items += "Estadísticas de reproducción" to { showStatisticsPanel() }
             }
             "Ver" -> {
                 items += "Relación de aspecto" to { showAspectMenu() }
@@ -2699,6 +2701,56 @@ class MainActivity : AppCompatActivity() {
         dialog.window?.setGravity(android.view.Gravity.END or android.view.Gravity.CENTER_VERTICAL)
         dialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
         dialog.window?.attributes = dialog.window?.attributes?.apply { dimAmount = 0.55f }
+    }
+
+
+    private fun showStatisticsPanel() {
+        val player = mediaPlayer
+        val uri = currentUri
+        if (player == null || uri == null) {
+            Toast.makeText(this, "Primero abre un archivo", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val elapsed = player.time.coerceAtLeast(0L)
+        val duration = player.length.coerceAtLeast(0L)
+        val percent = if (duration > 0L) String.format(Locale.US, "%.1f%%", player.position.coerceIn(0f, 1f) * 100f) else "No disponible"
+        val audioTracks = runCatching { player.audioTracks }.getOrNull().orEmpty()
+        val audioId = runCatching { player.audioTrack }.getOrNull()
+        val subtitleId = runCatching { player.spuTrack }.getOrNull()
+        val report = buildString {
+            append("ESTADO\n")
+            append(if (player.isPlaying) "Reproduciendo" else "En pausa / preparando").append("\n")
+            append("Archivo: ").append(getDisplayName(uri)).append("\n")
+            append("Posición: ").append(formatTime(elapsed)).append(" / ").append(if (duration > 0L) formatTime(duration) else "No disponible").append("\n")
+            append("Progreso: ").append(percent).append("\n")
+            append("Velocidad: ").append(String.format(Locale.US, "%.2fx", player.rate)).append("\n\n")
+            append("DECODIFICACIÓN\n")
+            append("Motor: LibVLC 3.7.7\n")
+            append("Modo solicitado: ").append(if (isHw) "Hardware" else "Software").append("\n")
+            append("Frecuencia de pantalla: ").append(displayRefreshRateLabel()).append("\n\n")
+            append("PISTAS\n")
+            append("Pistas de audio detectadas: ").append(audioTracks.size).append("\n")
+            append("ID de audio activa: ").append(audioId ?: "No disponible").append("\n")
+            append("ID de subtítulo activo: ").append(subtitleId ?: "No disponible").append("\n\n")
+            append("DATOS EN TIEMPO REAL\n")
+            append("FPS, bitrate instantáneo, frames perdidos y uso de CPU/GPU no están expuestos por la API Android de LibVLC usada por esta versión. No se muestran valores estimados.")
+        }
+        val panel = android.widget.ScrollView(this).apply {
+            setPadding(dp(18), dp(8), dp(18), dp(8))
+            addView(TextView(this@MainActivity).apply {
+                text = report
+                setTextColor(0xFFE1E7EF.toInt())
+                textSize = 13f
+                typeface = android.graphics.Typeface.MONOSPACE
+                setLineSpacing(dp(3).toFloat(), 1f)
+            })
+        }
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Estadísticas de reproducción")
+            .setView(panel)
+            .setPositiveButton("Actualizar") { _, _ -> showStatisticsPanel() }
+            .setNegativeButton("Cerrar", null)
+            .show()
     }
 
     private fun showMediaInfo() {
