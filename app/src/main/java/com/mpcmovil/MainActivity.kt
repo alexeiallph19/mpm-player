@@ -186,8 +186,8 @@ class MainActivity : AppCompatActivity() {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(18), dp(12), dp(18), dp(12))
             background = android.graphics.drawable.GradientDrawable().apply {
-                setColor(0xFF151B24.toInt()); cornerRadius = dp(22).toFloat()
-                setStroke(dp(1), 0xFF303B49.toInt())
+                setColor(0xFF242424.toInt()); cornerRadius = dp(22).toFloat()
+                setStroke(dp(1), 0xFF555555.toInt())
             }
         }
         val header = LinearLayout(this).apply { gravity = android.view.Gravity.CENTER_VERTICAL; orientation = LinearLayout.HORIZONTAL }
@@ -213,7 +213,7 @@ class MainActivity : AppCompatActivity() {
         root.addView(scroll, LinearLayout.LayoutParams(-1, 0, 1f))
         val footer = TextView(this).apply {
             text = "Pistas gestionadas por LibVLC · motor de VLC"
-            textSize = 11f; setTextColor(0xFF9BA8B8.toInt())
+            textSize = 11f; setTextColor(0xFFB0B0B0.toInt())
             setPadding(dp(4), dp(12), dp(4), dp(4))
         }
         root.addView(footer)
@@ -223,17 +223,17 @@ class MainActivity : AppCompatActivity() {
                 orientation = LinearLayout.HORIZONTAL; gravity = android.view.Gravity.CENTER_VERTICAL
                 setPadding(dp(14), 0, dp(14), 0)
                 background = android.graphics.drawable.GradientDrawable().apply {
-                    setColor(if (selected) 0xFF263B4C.toInt() else 0xFF202936.toInt())
+                    setColor(if (selected) 0xFF414141.toInt() else 0xFF303030.toInt())
                     cornerRadius = dp(12).toFloat()
                 }
                 isClickable = true; isFocusable = true; setOnClickListener { action() }
             }
             val labelView = TextView(this).apply {
-                text = label; textSize = 14f; setTextColor(if (selected) 0xFF78A9D2.toInt() else 0xFFF1F4F8.toInt())
+                text = label; textSize = 14f; setTextColor(if (selected) 0xFFBFC6CD.toInt() else 0xFFF1F4F8.toInt())
             }
             item.addView(labelView, LinearLayout.LayoutParams(0, -1, 1f))
             if (selected) item.addView(TextView(this).apply {
-                text = "✓"; textSize = 18f; setTextColor(0xFF78A9D2.toInt()); gravity = android.view.Gravity.CENTER
+                text = "✓"; textSize = 18f; setTextColor(0xFFBFC6CD.toInt()); gravity = android.view.Gravity.CENTER
             }, LinearLayout.LayoutParams(dp(28), -1))
             body.addView(item, LinearLayout.LayoutParams(-1, dp(50)).apply { bottomMargin = dp(7) })
         }
@@ -276,9 +276,9 @@ class MainActivity : AppCompatActivity() {
                     text = if (tabName == "Subs") "SUBTÍTULOS" else "AUDIO"
                     gravity = android.view.Gravity.CENTER
                     textSize = 12f; setTypeface(null, android.graphics.Typeface.BOLD)
-                    setTextColor(if (active) 0xFF78A9D2.toInt() else 0xFF9BA8B8.toInt())
+                    setTextColor(if (active) 0xFFBFC6CD.toInt() else 0xFFB0B0B0.toInt())
                     background = android.graphics.drawable.GradientDrawable().apply {
-                        setColor(if (active) 0xFF263B4C.toInt() else 0xFF202936.toInt())
+                        setColor(if (active) 0xFF414141.toInt() else 0xFF303030.toInt())
                         cornerRadius = dp(10).toFloat()
                     }
                     setOnClickListener { render(tabName) }
@@ -314,8 +314,8 @@ class MainActivity : AppCompatActivity() {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(22), dp(18), dp(22), dp(18))
             background = android.graphics.drawable.GradientDrawable().apply {
-                setColor(0xFF151B24.toInt()); cornerRadius = dp(20).toFloat()
-                setStroke(dp(1), 0xFF303B49.toInt())
+                setColor(0xFF242424.toInt()); cornerRadius = dp(20).toFloat()
+                setStroke(dp(1), 0xFF555555.toInt())
             }
         }
         root.addView(TextView(this).apply {
@@ -325,7 +325,7 @@ class MainActivity : AppCompatActivity() {
         }, LinearLayout.LayoutParams(-1, dp(48)))
         val value = TextView(this).apply {
             gravity = android.view.Gravity.CENTER
-            textSize = 25f; setTextColor(0xFF78A9D2.toInt())
+            textSize = 25f; setTextColor(0xFFBFC6CD.toInt())
         }
         fun refreshValue() {
             val micros = mediaPlayer?.getSpuDelay() ?: 0L
@@ -338,7 +338,7 @@ class MainActivity : AppCompatActivity() {
                 text = label; gravity = android.view.Gravity.CENTER; textSize = 19f
                 setTextColor(0xFFFFFFFF.toInt())
                 background = android.graphics.drawable.GradientDrawable().apply {
-                    setColor(0xFF202936.toInt()); cornerRadius = dp(12).toFloat()
+                    setColor(0xFF303030.toInt()); cornerRadius = dp(12).toFloat()
                 }
                 setOnClickListener { action(); refreshValue() }
             }, LinearLayout.LayoutParams(0, dp(48), 1f).apply { marginEnd = dp(5); marginStart = dp(5) })
@@ -348,13 +348,13 @@ class MainActivity : AppCompatActivity() {
         root.addView(controls, LinearLayout.LayoutParams(-1, dp(54)))
         val reset = TextView(this).apply {
             text = "RESTABLECER"; gravity = android.view.Gravity.CENTER
-            setTextColor(0xFF78A9D2.toInt()); textSize = 12f
+            setTextColor(0xFFBFC6CD.toInt()); textSize = 12f
             setOnClickListener { mediaPlayer?.setSpuDelay(0L); refreshValue() }
         }
         root.addView(reset, LinearLayout.LayoutParams(-1, dp(46)))
         val close = TextView(this).apply {
             text = "CERRAR"; gravity = android.view.Gravity.CENTER
-            setTextColor(0xFFB6C1CE.toInt()); textSize = 12f
+            setTextColor(0xFFC0C0C0.toInt()); textSize = 12f
             setOnClickListener { dialog.dismiss() }
         }
         root.addView(close, LinearLayout.LayoutParams(-1, dp(42)))
@@ -495,8 +495,8 @@ class MainActivity : AppCompatActivity() {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(18), dp(14), dp(18), dp(16))
             background = android.graphics.drawable.GradientDrawable().apply {
-                setColor(0xFF151B24.toInt()); cornerRadius = dp(22).toFloat()
-                setStroke(dp(1), 0xFF303B49.toInt())
+                setColor(0xFF242424.toInt()); cornerRadius = dp(22).toFloat()
+                setStroke(dp(1), 0xFF555555.toInt())
             }
         }
         val header = LinearLayout(this).apply {
@@ -517,7 +517,7 @@ class MainActivity : AppCompatActivity() {
         root.addView(TextView(this).apply {
             text = "MPM PLAYER  ·  CONFIGURACIÓN"
             textSize = 10f; letterSpacing = 0.12f
-            setTextColor(0xFF78A9D2.toInt())
+            setTextColor(0xFFBFC6CD.toInt())
             setTypeface(null, android.graphics.Typeface.BOLD)
             setPadding(dp(4), dp(4), 0, dp(14))
         })
@@ -530,7 +530,7 @@ class MainActivity : AppCompatActivity() {
             items.addView(TextView(this).apply {
                 text = label.uppercase(Locale.getDefault())
                 textSize = 10f; letterSpacing = 0.1f
-                setTextColor(0xFF78A9D2.toInt())
+                setTextColor(0xFFBFC6CD.toInt())
                 setTypeface(null, android.graphics.Typeface.BOLD)
                 setPadding(dp(4), dp(12), 0, dp(8))
             }, LinearLayout.LayoutParams(-1, dp(34)))
@@ -541,8 +541,8 @@ class MainActivity : AppCompatActivity() {
                 gravity = android.view.Gravity.CENTER_VERTICAL
                 setPadding(dp(14), dp(8), dp(12), dp(8))
                 background = android.graphics.drawable.GradientDrawable().apply {
-                    setColor(0xFF202936.toInt()); cornerRadius = dp(13).toFloat()
-                    setStroke(dp(1), 0xFF2D3948.toInt())
+                    setColor(0xFF303030.toInt()); cornerRadius = dp(13).toFloat()
+                    setStroke(dp(1), 0xFF3A3A3A.toInt())
                 }
                 isClickable = true; isFocusable = true
                 setOnClickListener { dialog.dismiss(); callback() }
@@ -557,13 +557,13 @@ class MainActivity : AppCompatActivity() {
                 maxLines = 1
             })
             labels.addView(TextView(this).apply {
-                text = detail; textSize = 11f; setTextColor(0xFF9BA8B8.toInt())
+                text = detail; textSize = 11f; setTextColor(0xFFB0B0B0.toInt())
                 maxLines = 2
             })
             row.addView(labels, LinearLayout.LayoutParams(0, -2, 1f))
             row.addView(TextView(this).apply {
                 text = "›"; textSize = 25f; gravity = android.view.Gravity.CENTER
-                setTextColor(0xFF78A9D2.toInt())
+                setTextColor(0xFFBFC6CD.toInt())
             }, LinearLayout.LayoutParams(dp(24), dp(42)))
             items.addView(row, LinearLayout.LayoutParams(-1, dp(64)).apply {
                 bottomMargin = dp(7)
@@ -622,7 +622,7 @@ class MainActivity : AppCompatActivity() {
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(18), dp(10), dp(18), dp(12))
-            setBackgroundColor(0xFF151B24.toInt())
+            setBackgroundColor(0xFF242424.toInt())
         }
         val header = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -642,14 +642,14 @@ class MainActivity : AppCompatActivity() {
             minWidth = dp(44)
             minHeight = dp(42)
             setTextColor(0xFFE7EDF5.toInt())
-            setBackgroundColor(0xFF252E39.toInt())
+            setBackgroundColor(0xFF333333.toInt())
         }
         header.addView(refresh, LinearLayout.LayoutParams(dp(48), dp(42)))
         root.addView(header)
 
         val names = mutableListOf<String>()
         val listView = ListView(this).apply {
-            divider = android.graphics.drawable.ColorDrawable(0xFF29323D.toInt())
+            divider = android.graphics.drawable.ColorDrawable(0xFF383838.toInt())
             dividerHeight = dp(1)
             cacheColorHint = android.graphics.Color.TRANSPARENT
             isVerticalScrollBarEnabled = false
@@ -657,7 +657,7 @@ class MainActivity : AppCompatActivity() {
         val empty = TextView(this).apply {
             text = "Buscando dispositivos…"
             gravity = android.view.Gravity.CENTER
-            setTextColor(0xFF8F9BA9.toInt())
+            setTextColor(0xFFAAAAAA.toInt())
             textSize = 13f
             setPadding(dp(20), dp(28), dp(20), dp(28))
         }
@@ -669,7 +669,7 @@ class MainActivity : AppCompatActivity() {
                     gravity = android.view.Gravity.CENTER_VERTICAL
                     setPadding(dp(12), dp(10), dp(12), dp(10))
                     background = android.graphics.drawable.GradientDrawable().apply {
-                        setColor(0xFF202936.toInt())
+                        setColor(0xFF303030.toInt())
                         cornerRadius = dp(10).toFloat()
                     }
                 }
@@ -677,7 +677,7 @@ class MainActivity : AppCompatActivity() {
                     text = "▣"
                     textSize = 22f
                     gravity = android.view.Gravity.CENTER
-                    setTextColor(0xFF78A9D2.toInt())
+                    setTextColor(0xFFBFC6CD.toInt())
                 }
                 row.addView(icon, LinearLayout.LayoutParams(dp(42), dp(48)))
                 val labels = LinearLayout(this@MainActivity).apply {
@@ -695,13 +695,13 @@ class MainActivity : AppCompatActivity() {
                 labels.addView(TextView(this@MainActivity).apply {
                     text = "Reproducción remota mediante LibVLC"
                     textSize = 11f
-                    setTextColor(0xFF9BA8B8.toInt())
+                    setTextColor(0xFFB0B0B0.toInt())
                 })
                 row.addView(labels, LinearLayout.LayoutParams(0, -2, 1f))
                 row.addView(TextView(this@MainActivity).apply {
                     text = "›"
                     textSize = 25f
-                    setTextColor(0xFF9AA7B5.toInt())
+                    setTextColor(0xFFB0B0B0.toInt())
                 })
                 return row
             }
@@ -1102,14 +1102,14 @@ class MainActivity : AppCompatActivity() {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(14), dp(12), dp(14), dp(12))
             background = android.graphics.drawable.GradientDrawable().apply {
-                setColor(0xFF151B24.toInt())
+                setColor(0xFF242424.toInt())
                 cornerRadius = dp(20).toFloat()
-                setStroke(dp(1), 0xFF344153.toInt())
+                setStroke(dp(1), 0xFF484848.toInt())
             }
         }
         panel.addView(TextView(this).apply {
             text = heading
-            setTextColor(0xFF78A9D2.toInt())
+            setTextColor(0xFFBFC6CD.toInt())
             textSize = 11f
             letterSpacing = 0.12f
             setTypeface(null, android.graphics.Typeface.BOLD)
@@ -1128,7 +1128,7 @@ class MainActivity : AppCompatActivity() {
                 isClickable = true
                 isFocusable = true
                 background = android.graphics.drawable.GradientDrawable().apply {
-                    setColor(0xFF1D2632.toInt())
+                    setColor(0xFF292929.toInt())
                     cornerRadius = dp(10).toFloat()
                 }
                 setOnClickListener {
@@ -1320,9 +1320,9 @@ class MainActivity : AppCompatActivity() {
             seekBar.progress = 0
         }
 
-        findViewById<Button>(R.id.btnBack).setOnClickListener { seekBy(-seekIntervalSeconds) }
+        findViewById<ImageButton>(R.id.btnBack).setOnClickListener { seekBy(-seekIntervalSeconds) }
 
-        findViewById<Button>(R.id.btnForward).setOnClickListener { seekBy(seekIntervalSeconds) }
+        findViewById<ImageButton>(R.id.btnForward).setOnClickListener { seekBy(seekIntervalSeconds) }
 
         btnSpeed.setOnClickListener {
             speedIndex = (speedIndex + 1) % speeds.size
@@ -1377,16 +1377,16 @@ class MainActivity : AppCompatActivity() {
             gravity = android.view.Gravity.CENTER
             setPadding(dp(24), dp(38), dp(24), dp(38))
             background = android.graphics.drawable.GradientDrawable().apply {
-                setColor(0xFF151B24.toInt())
+                setColor(0xFF242424.toInt())
                 cornerRadius = dp(18).toFloat()
-                setStroke(dp(1), 0xFF263140.toInt())
+                setStroke(dp(1), 0xFF505050.toInt())
             }
         }
         panel.addView(TextView(this).apply {
             text = "▶"
             gravity = android.view.Gravity.CENTER
             textSize = 30f
-            setTextColor(0xFF78A9D2.toInt())
+            setTextColor(0xFFBFC6CD.toInt())
         }, LinearLayout.LayoutParams(-1, dp(48)))
         panel.addView(TextView(this).apply {
             text = message
@@ -1400,7 +1400,7 @@ class MainActivity : AppCompatActivity() {
             text = "Abre un archivo para empezar a reproducir"
             gravity = android.view.Gravity.CENTER
             textSize = 12f
-            setTextColor(0xFF929CAB.toInt())
+            setTextColor(0xFFAAAAAA.toInt())
         }, LinearLayout.LayoutParams(-1, -2))
         libraryItems.addView(panel, LinearLayout.LayoutParams(-1, -2).apply {
             setMargins(0, dp(8), 0, dp(8))
@@ -1481,11 +1481,11 @@ class MainActivity : AppCompatActivity() {
         ids.forEach { id ->
             val selected = id == active
             findViewById<Button>(id).apply {
-                setTextColor(if (selected) 0xFF78A9D2.toInt() else 0xFFAAB3C0.toInt())
+                setTextColor(if (selected) 0xFFBFC6CD.toInt() else 0xFFBDBDBD.toInt())
                 background = android.graphics.drawable.GradientDrawable().apply {
-                    setColor(if (selected) 0xFF30251F.toInt() else 0x00000000)
+                    setColor(if (selected) 0xFF414141.toInt() else 0x00000000)
                     cornerRadius = dp(18).toFloat()
-                    if (selected) setStroke(dp(1), 0xFF62402D.toInt())
+                    if (selected) setStroke(dp(1), 0xFF666666.toInt())
                 }
             }
         }
@@ -1495,7 +1495,7 @@ class MainActivity : AppCompatActivity() {
                     text = "‹   Todas las carpetas"
                     textSize = 13f
                     setTypeface(null, android.graphics.Typeface.BOLD)
-                    setTextColor(0xFF78A9D2.toInt())
+                    setTextColor(0xFFBFC6CD.toInt())
                     setPadding(dp(8), dp(10), 0, dp(15))
                     setOnClickListener { selectedFolder = ""; renderLibrary("Carpetas") }
                 })
@@ -1510,14 +1510,14 @@ class MainActivity : AppCompatActivity() {
                         gravity = android.view.Gravity.CENTER_VERTICAL
                         setPadding(dp(16), dp(14), dp(16), dp(14))
                         background = android.graphics.drawable.GradientDrawable().apply {
-                            setColor(0xFF151B24.toInt()); cornerRadius = dp(14).toFloat()
-                            setStroke(dp(1), 0xFF263140.toInt())
+                            setColor(0xFF242424.toInt()); cornerRadius = dp(14).toFloat()
+                            setStroke(dp(1), 0xFF505050.toInt())
                         }
                         isClickable = true; isFocusable = true
                         setOnClickListener { selectedFolder = folder; renderLibrary("Carpetas") }
                     }
                     row.addView(TextView(this).apply {
-                        text = "▰"; textSize = 22f; setTextColor(0xFF78A9D2.toInt())
+                        text = "▰"; textSize = 22f; setTextColor(0xFFBFC6CD.toInt())
                         gravity = android.view.Gravity.CENTER
                     }, LinearLayout.LayoutParams(dp(38), dp(42)))
                     val details = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(10), 0, 0, 0) }
@@ -1526,11 +1526,11 @@ class MainActivity : AppCompatActivity() {
                         setTypeface(null, android.graphics.Typeface.BOLD); setTextColor(0xFFF2F4F7.toInt())
                     })
                     details.addView(TextView(this).apply {
-                        text = "$count vídeos"; textSize = 11f; setTextColor(0xFF929CAB.toInt())
+                        text = "$count vídeos"; textSize = 11f; setTextColor(0xFFAAAAAA.toInt())
                         setPadding(0, dp(4), 0, 0)
                     })
                     row.addView(details, LinearLayout.LayoutParams(0, -2, 1f))
-                    row.addView(TextView(this).apply { text = "›"; textSize = 24f; setTextColor(0xFF7F8998.toInt()) })
+                    row.addView(TextView(this).apply { text = "›"; textSize = 24f; setTextColor(0xFF999999.toInt()) })
                     libraryItems.addView(row, LinearLayout.LayoutParams(-1, -2).apply { setMargins(0, dp(5), 0, dp(5)) })
                 }
             }
@@ -1552,23 +1552,23 @@ class MainActivity : AppCompatActivity() {
             gravity = android.view.Gravity.CENTER_VERTICAL
             setPadding(dp(9), dp(9), dp(12), dp(9))
             background = android.graphics.drawable.GradientDrawable().apply {
-                setColor(0xFF151B24.toInt())
+                setColor(0xFF242424.toInt())
                 cornerRadius = dp(15).toFloat()
-                setStroke(dp(1), 0xFF263140.toInt())
+                setStroke(dp(1), 0xFF505050.toInt())
             }
             isClickable = true
             isFocusable = true
         }
         val thumbFrame = android.widget.FrameLayout(this).apply {
             background = android.graphics.drawable.GradientDrawable().apply {
-                setColor(0xFF242D39.toInt()); cornerRadius = dp(10).toFloat()
+                setColor(0xFF303030.toInt()); cornerRadius = dp(10).toFloat()
             }
             clipToOutline = true
         }
         val thumb = ImageView(this).apply {
             layoutParams = android.widget.FrameLayout.LayoutParams(-1, -1)
             scaleType = ImageView.ScaleType.CENTER_CROP
-            setBackgroundColor(0xFF242D39.toInt())
+            setBackgroundColor(0xFF303030.toInt())
             setImageResource(android.R.drawable.ic_media_play)
         }
         thumbFrame.addView(thumb)
@@ -1600,7 +1600,7 @@ class MainActivity : AppCompatActivity() {
             textSize = 10.5f
             maxLines = 1
             ellipsize = android.text.TextUtils.TruncateAt.END
-            setTextColor(0xFF929CAB.toInt())
+            setTextColor(0xFFAAAAAA.toInt())
             setPadding(0, dp(6), 0, 0)
         })
         row.addView(info, LinearLayout.LayoutParams(0, -2, 1f))
@@ -1673,9 +1673,9 @@ class MainActivity : AppCompatActivity() {
                     isLibraryVisible = false
                     welcomeScreen.visibility = View.GONE
                     txtStatus.text = currentUri?.let { getPlayerTitle(it) } ?: "Reproduciendo"
-                    btnPlay.setImageResource(R.drawable.vlc_ic_pause_player)
+                    btnPlay.setImageResource(android.R.drawable.ic_media_pause)
                     btnPlay.contentDescription = "Pausar"
-                    btnCenterPlay.setImageResource(R.drawable.vlc_ic_play_player)
+                    btnCenterPlay.setImageResource(android.R.drawable.ic_media_play)
                     setControlsVisible(true)
                 }
                 MediaPlayer.Event.Paused -> {
@@ -1683,9 +1683,9 @@ class MainActivity : AppCompatActivity() {
                         setControlsVisible(false)
                     } else {
                     txtStatus.text = currentUri?.let { getPlayerTitle(it) } ?: "Pausa"
-                    btnPlay.setImageResource(R.drawable.vlc_ic_play_player)
+                    btnPlay.setImageResource(android.R.drawable.ic_media_play)
                     btnPlay.contentDescription = "Reproducir"
-                    btnCenterPlay.setImageResource(R.drawable.vlc_ic_play_player)
+                    btnCenterPlay.setImageResource(android.R.drawable.ic_media_play)
                     setControlsVisible(true)
                     }
                 }
@@ -1697,8 +1697,8 @@ class MainActivity : AppCompatActivity() {
                         welcomeScreen.visibility = View.VISIBLE
                         setControlsVisible(false)
                         txtStatus.text = "Detenido"
-                        btnPlay.setImageResource(R.drawable.vlc_ic_play_player)
-                        btnCenterPlay.setImageResource(R.drawable.vlc_ic_play_player)
+                        btnPlay.setImageResource(android.R.drawable.ic_media_play)
+                        btnCenterPlay.setImageResource(android.R.drawable.ic_media_play)
                     }
                 }
                 MediaPlayer.Event.TimeChanged -> {
@@ -2080,7 +2080,7 @@ class MainActivity : AppCompatActivity() {
                         tag = "favorite_thumbnail"
                         layoutParams = LinearLayout.LayoutParams(dp(76), dp(58))
                         scaleType = ImageView.ScaleType.CENTER_CROP
-                        setBackgroundColor(0xFF252525.toInt())
+                        setBackgroundColor(0xFF303030.toInt())
                     }
                     val label = TextView(this@MainActivity).apply {
                         tag = "favorite_label"
@@ -2278,8 +2278,8 @@ class MainActivity : AppCompatActivity() {
     private fun showSystemBars() {
         immersiveMode = false
         WindowCompat.setDecorFitsSystemWindows(window, true)
-        window.statusBarColor = 0xFF101722.toInt()
-        window.navigationBarColor = 0xFF101722.toInt()
+        window.statusBarColor = 0xFF202020.toInt()
+        window.navigationBarColor = 0xFF202020.toInt()
         WindowInsetsControllerCompat(window, window.decorView).let { controller ->
             controller.show(WindowInsetsCompat.Type.systemBars())
             controller.systemBarsBehavior =
@@ -2561,9 +2561,9 @@ class MainActivity : AppCompatActivity() {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(16), dp(12), dp(16), dp(14))
             background = android.graphics.drawable.GradientDrawable().apply {
-                setColor(0xFF111820.toInt())
+                setColor(0xFF252525.toInt())
                 cornerRadius = dp(18).toFloat()
-                setStroke(dp(1), 0xFF344153.toInt())
+                setStroke(dp(1), 0xFF484848.toInt())
             }
         }
         val header = LinearLayout(this).apply {
@@ -2580,7 +2580,7 @@ class MainActivity : AppCompatActivity() {
         heading.addView(TextView(this).apply {
             text = "${playlist.size} archivos · MPC playlist"
             textSize = 11f
-            setTextColor(0xFF91A0B2.toInt())
+            setTextColor(0xFFB0B0B0.toInt())
             setPadding(0, dp(3), 0, 0)
         })
         header.addView(heading, LinearLayout.LayoutParams(0, -2, 1f))
@@ -2588,12 +2588,12 @@ class MainActivity : AppCompatActivity() {
             text = "✕"
             textSize = 19f
             gravity = android.view.Gravity.CENTER
-            setTextColor(0xFFD7DFE9.toInt())
+            setTextColor(0xFFE0E0E0.toInt())
             setOnClickListener { dialog.dismiss() }
         }, LinearLayout.LayoutParams(dp(42), dp(42)))
         root.addView(header)
 
-        val divider = View(this).apply { setBackgroundColor(0xFF2B3745.toInt()) }
+        val divider = View(this).apply { setBackgroundColor(0xFF424242.toInt()) }
         root.addView(divider, LinearLayout.LayoutParams(-1, dp(1)).apply {
             topMargin = dp(10); bottomMargin = dp(8)
         })
@@ -2612,9 +2612,9 @@ class MainActivity : AppCompatActivity() {
                     gravity = android.view.Gravity.CENTER_VERTICAL
                     setPadding(dp(11), dp(8), dp(10), dp(8))
                     background = android.graphics.drawable.GradientDrawable().apply {
-                        setColor(if (selected) 0xFF20364A.toInt() else 0xFF19232E.toInt())
+                        setColor(if (selected) 0xFF454545.toInt() else 0xFF303030.toInt())
                         cornerRadius = dp(10).toFloat()
-                        if (selected) setStroke(dp(1), 0xFF547FA2.toInt())
+                        if (selected) setStroke(dp(1), 0xFF858585.toInt())
                     }
                     isClickable = true
                     isFocusable = true
@@ -2629,7 +2629,7 @@ class MainActivity : AppCompatActivity() {
                     gravity = android.view.Gravity.CENTER
                     textSize = 12f
                     setTypeface(null, android.graphics.Typeface.BOLD)
-                    setTextColor(if (selected) 0xFF83B8E5.toInt() else 0xFF8493A5.toInt())
+                    setTextColor(if (selected) 0xFFD0D0D0.toInt() else 0xFFAAAAAA.toInt())
                 }, LinearLayout.LayoutParams(dp(34), dp(42)))
                 val details = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
                 details.addView(TextView(this).apply {
@@ -2637,21 +2637,21 @@ class MainActivity : AppCompatActivity() {
                     textSize = 13f
                     maxLines = 2
                     ellipsize = android.text.TextUtils.TruncateAt.END
-                    setTextColor(if (selected) 0xFFFFFFFF.toInt() else 0xFFE1E7EF.toInt())
+                    setTextColor(if (selected) 0xFFFFFFFF.toInt() else 0xFFE0E0E0.toInt())
                     setTypeface(null, if (selected) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
                 })
                 details.addView(TextView(this).apply {
                     text = if (selected) "REPRODUCIENDO" else "PULSA PARA REPRODUCIR"
                     textSize = 9f
                     letterSpacing = 0.08f
-                    setTextColor(if (selected) 0xFF83B8E5.toInt() else 0xFF77879A.toInt())
+                    setTextColor(if (selected) 0xFFD0D0D0.toInt() else 0xFF999999.toInt())
                     setPadding(0, dp(3), 0, 0)
                 })
                 row.addView(details, LinearLayout.LayoutParams(0, -2, 1f))
                 row.addView(TextView(this).apply {
                     text = "›"
                     textSize = 22f
-                    setTextColor(0xFF8A9AAF.toInt())
+                    setTextColor(0xFFAAAAAA.toInt())
                 })
                 list.addView(row, LinearLayout.LayoutParams(-1, -2).apply {
                     bottomMargin = dp(6)
@@ -2672,9 +2672,9 @@ class MainActivity : AppCompatActivity() {
                 gravity = android.view.Gravity.CENTER
                 textSize = 12f
                 setTypeface(null, android.graphics.Typeface.BOLD)
-                setTextColor(if (primary) 0xFF101820.toInt() else 0xFFD7E0EA.toInt())
+                setTextColor(if (primary) 0xFF202020.toInt() else 0xFFE0E0E0.toInt())
                 background = android.graphics.drawable.GradientDrawable().apply {
-                    setColor(if (primary) 0xFF83B8E5.toInt() else 0xFF253241.toInt())
+                    setColor(if (primary) 0xFFD0D0D0.toInt() else 0xFF383838.toInt())
                     cornerRadius = dp(9).toFloat()
                 }
                 setOnClickListener { action() }
@@ -2739,7 +2739,7 @@ class MainActivity : AppCompatActivity() {
             setPadding(dp(18), dp(8), dp(18), dp(8))
             addView(TextView(this@MainActivity).apply {
                 text = report
-                setTextColor(0xFFE1E7EF.toInt())
+                setTextColor(0xFFE0E0E0.toInt())
                 textSize = 13f
                 typeface = android.graphics.Typeface.MONOSPACE
                 setLineSpacing(dp(3).toFloat(), 1f)
@@ -2845,11 +2845,11 @@ private fun showOsd(msg: String) {
         val refresh = displayRefreshRateLabel()
         if (isHw) {
             btnHwSw.text = "HW"
-            btnHwSw.setTextColor(0xFF2ECC71.toInt())
+            btnHwSw.setTextColor(0xFFB8B8B8.toInt())
             txtDecoderInfo.text = "[HW | " + refresh + "]"
         } else {
             btnHwSw.text = "SW"
-            btnHwSw.setTextColor(0xFFE67E22.toInt())
+            btnHwSw.setTextColor(0xFFB8B8B8.toInt())
             txtDecoderInfo.text = "[SW | " + refresh + "]"
         }
     }

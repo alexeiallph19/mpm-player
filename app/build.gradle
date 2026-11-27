@@ -11,8 +11,8 @@ android {
         applicationId "com.mpmplayer.android"
         minSdk 21
         targetSdk 34
-        versionCode 19
-        versionName "4.6.0-MPM"
+        versionCode 20
+        versionName "4.7.0-MPM"
     }
 
     signingConfigs {

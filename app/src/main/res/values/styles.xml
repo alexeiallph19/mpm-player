@@ -1,13 +1,13 @@
 <resources>
     <style name="Theme.MPMPlayer" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">#F06416</item>
-        <item name="colorPrimaryVariant">#C94D0A</item>
+        <item name="colorPrimary">#8F8F8F</item>
+        <item name="colorPrimaryVariant">#666666</item>
         <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="colorSecondary">#F06416</item>
+        <item name="colorSecondary">#8F8F8F</item>
         <item name="colorOnSecondary">#FFFFFF</item>
         <item name="colorSurface">#303030</item>
         <item name="colorOnSurface">#F0F0F0</item>
-        <item name="android:colorAccent">#F06416</item>
+        <item name="android:colorAccent">#8F8F8F</item>
         <item name="android:windowBackground">#202020</item>
         <item name="android:statusBarColor">#202020</item>
         <item name="android:navigationBarColor">#202020</item>
@@ -17,6 +17,6 @@
     <style name="ThemeOverlay.MPMPlayer.AlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="colorSurface">#303030</item>
         <item name="colorOnSurface">#F0F0F0</item>
-        <item name="colorPrimary">#F06416</item>
+        <item name="colorPrimary">#8F8F8F</item>
     </style>
 </resources>
