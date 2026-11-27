@@ -1931,19 +1931,14 @@ class MainActivity : AppCompatActivity() {
                         handler.postDelayed({
                             if (requestId == playbackRequestId.get() &&
                                 isPreparingPlayback && mediaPlayer?.isPlaying != true) {
-                                isPreparingPlayback = false
                                 val report = playbackDiagnostics +
-                                    "\n\nLibVLC todavía no confirmó la reproducción después de 90 segundos." +
+                                    "\n\nLibVLC sigue preparando el vídeo después de 90 segundos." +
                                     "\nResultado de play(): $playResult" +
                                     "\n\nEstado del reproductor:\n" + runtimeSnapshots.joinToString("\n") +
                                     "\n\nEventos VLC: " + playbackEvents.joinToString(" → ")
-                                txtStatus.text = "No se pudo iniciar el vídeo"
-                                Log.e("MPM_PLAYER", report)
-                                MaterialAlertDialogBuilder(this)
-                                    .setTitle("La reproducción no pudo iniciarse")
-                                    .setMessage(report)
-                                    .setPositiveButton("Cerrar", null)
-                                    .show()
+                                txtStatus.text = "Cargando vídeo…"
+                                Log.w("MPM_PLAYER", report)
+                                showOsd("La carga está tardando más de lo habitual")
                             }
                         }, 90_000L)
                     } catch (playError: Exception) {
