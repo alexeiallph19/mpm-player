@@ -11,8 +11,8 @@ android {
         applicationId "com.mpmplayer.android"
         minSdk 21
         targetSdk 34
-        versionCode 18
-        versionName "4.5.0-MPM"
+        versionCode 19
+        versionName "4.6.0-MPM"
     }
 
     signingConfigs {
@@ -47,7 +47,5 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-
-    // Official VideoLAN LibVLC engine, published as an Android AAR.
     implementation 'org.videolan.android:libvlc-all:3.7.7'
 }

@@ -1,22 +1,22 @@
 <resources>
     <style name="Theme.MPMPlayer" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">#9BB4CC</item>
-        <item name="colorPrimaryVariant">#52697F</item>
-        <item name="colorOnPrimary">#111820</item>
-        <item name="colorSecondary">#78A9D2</item>
-        <item name="colorOnSecondary">#101820</item>
-        <item name="colorSurface">#151A21</item>
-        <item name="colorOnSurface">#F2F2F2</item>
-        <item name="android:colorAccent">#78A9D2</item>
+        <item name="colorPrimary">#F06416</item>
+        <item name="colorPrimaryVariant">#C94D0A</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">#F06416</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSurface">#303030</item>
+        <item name="colorOnSurface">#F0F0F0</item>
+        <item name="android:colorAccent">#F06416</item>
         <item name="android:windowBackground">#202020</item>
-        <item name="android:statusBarColor">#00000000</item>
-        <item name="android:navigationBarColor">#00000000</item>
+        <item name="android:statusBarColor">#202020</item>
+        <item name="android:navigationBarColor">#202020</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.MPMPlayer.AlertDialog</item>
     </style>
     <style name="ThemeOverlay.MPMPlayer.AlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
-        <item name="colorSurface">#1A2029</item>
-        <item name="colorOnSurface">#F2F2F2</item>
-        <item name="colorPrimary">#78A9D2</item>
+        <item name="colorSurface">#303030</item>
+        <item name="colorOnSurface">#F0F0F0</item>
+        <item name="colorPrimary">#F06416</item>
     </style>
 </resources>
