@@ -2545,13 +2545,162 @@ class MainActivity : AppCompatActivity() {
                       val uri = Uri.parse(ordered[which]); playlist.clear(); playlist.add(uri); playlistIndex = 0; play(uri)
                   }.setNegativeButton("Cerrar", null).show()
               }
-              private fun showPlaylist() {
-                  if (playlist.isEmpty()) { MaterialAlertDialogBuilder(this).setTitle("Lista de reproducción").setMessage("Selecciona varios videos desde Archivo > Abrir video para crear una lista.").setPositiveButton("Aceptar", null).show(); return }
-                  val names = playlist.mapIndexed { index, uri -> (if (index == playlistIndex) "▶  " else "") + getDisplayName(uri) }.toTypedArray()
-                  MaterialAlertDialogBuilder(this).setTitle("Lista de reproducción (" + playlist.size + ")").setItems(names) { _, which ->
-                      playlistIndex = which; play(playlist[which], 0L)
-                  }.setNegativeButton("Cerrar", null).show()
-              }
+    private fun showPlaylist() {
+        if (playlist.isEmpty()) {
+            MaterialAlertDialogBuilder(this).setTitle("Lista de reproducción")
+                .setMessage("Abre uno o varios vídeos para crear tu lista.")
+                .setPositiveButton("Abrir archivos") { _, _ -> pickFile() }
+                .setNegativeButton("Cerrar", null).show()
+            return
+        }
+
+        val dialog = android.app.Dialog(this)
+        val root = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(16), dp(12), dp(16), dp(14))
+            background = android.graphics.drawable.GradientDrawable().apply {
+                setColor(0xFF111820.toInt())
+                cornerRadius = dp(18).toFloat()
+                setStroke(dp(1), 0xFF344153.toInt())
+            }
+        }
+        val header = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = android.view.Gravity.CENTER_VERTICAL
+        }
+        val heading = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        heading.addView(TextView(this).apply {
+            text = "Lista de reproducción"
+            textSize = 18f
+            setTypeface(null, android.graphics.Typeface.BOLD)
+            setTextColor(0xFFF4F6F9.toInt())
+        })
+        heading.addView(TextView(this).apply {
+            text = "${playlist.size} archivos · MPC playlist"
+            textSize = 11f
+            setTextColor(0xFF91A0B2.toInt())
+            setPadding(0, dp(3), 0, 0)
+        })
+        header.addView(heading, LinearLayout.LayoutParams(0, -2, 1f))
+        header.addView(TextView(this).apply {
+            text = "✕"
+            textSize = 19f
+            gravity = android.view.Gravity.CENTER
+            setTextColor(0xFFD7DFE9.toInt())
+            setOnClickListener { dialog.dismiss() }
+        }, LinearLayout.LayoutParams(dp(42), dp(42)))
+        root.addView(header)
+
+        val divider = View(this).apply { setBackgroundColor(0xFF2B3745.toInt()) }
+        root.addView(divider, LinearLayout.LayoutParams(-1, dp(1)).apply {
+            topMargin = dp(10); bottomMargin = dp(8)
+        })
+
+        val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        val scroll = ScrollView(this).apply {
+            isFillViewport = false
+            addView(list, android.widget.FrameLayout.LayoutParams(-1, -2))
+        }
+        fun renderRows() {
+            list.removeAllViews()
+            playlist.forEachIndexed { index, uri ->
+                val selected = index == playlistIndex
+                val row = LinearLayout(this).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    gravity = android.view.Gravity.CENTER_VERTICAL
+                    setPadding(dp(11), dp(8), dp(10), dp(8))
+                    background = android.graphics.drawable.GradientDrawable().apply {
+                        setColor(if (selected) 0xFF20364A.toInt() else 0xFF19232E.toInt())
+                        cornerRadius = dp(10).toFloat()
+                        if (selected) setStroke(dp(1), 0xFF547FA2.toInt())
+                    }
+                    isClickable = true
+                    isFocusable = true
+                    setOnClickListener {
+                        playlistIndex = index
+                        play(uri, 0L)
+                        dialog.dismiss()
+                    }
+                }
+                row.addView(TextView(this).apply {
+                    text = if (selected) "▶" else String.format(Locale.US, "%02d", index + 1)
+                    gravity = android.view.Gravity.CENTER
+                    textSize = 12f
+                    setTypeface(null, android.graphics.Typeface.BOLD)
+                    setTextColor(if (selected) 0xFF83B8E5.toInt() else 0xFF8493A5.toInt())
+                }, LinearLayout.LayoutParams(dp(34), dp(42)))
+                val details = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+                details.addView(TextView(this).apply {
+                    text = getDisplayName(uri)
+                    textSize = 13f
+                    maxLines = 2
+                    ellipsize = android.text.TextUtils.TruncateAt.END
+                    setTextColor(if (selected) 0xFFFFFFFF.toInt() else 0xFFE1E7EF.toInt())
+                    setTypeface(null, if (selected) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
+                })
+                details.addView(TextView(this).apply {
+                    text = if (selected) "REPRODUCIENDO" else "PULSA PARA REPRODUCIR"
+                    textSize = 9f
+                    letterSpacing = 0.08f
+                    setTextColor(if (selected) 0xFF83B8E5.toInt() else 0xFF77879A.toInt())
+                    setPadding(0, dp(3), 0, 0)
+                })
+                row.addView(details, LinearLayout.LayoutParams(0, -2, 1f))
+                row.addView(TextView(this).apply {
+                    text = "›"
+                    textSize = 22f
+                    setTextColor(0xFF8A9AAF.toInt())
+                })
+                list.addView(row, LinearLayout.LayoutParams(-1, -2).apply {
+                    bottomMargin = dp(6)
+                })
+            }
+        }
+        renderRows()
+        root.addView(scroll, LinearLayout.LayoutParams(-1, 0, 1f))
+
+        val footer = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = android.view.Gravity.CENTER_VERTICAL
+            setPadding(0, dp(10), 0, 0)
+        }
+        fun footerAction(label: String, primary: Boolean = false, action: () -> Unit) {
+            footer.addView(TextView(this).apply {
+                text = label
+                gravity = android.view.Gravity.CENTER
+                textSize = 12f
+                setTypeface(null, android.graphics.Typeface.BOLD)
+                setTextColor(if (primary) 0xFF101820.toInt() else 0xFFD7E0EA.toInt())
+                background = android.graphics.drawable.GradientDrawable().apply {
+                    setColor(if (primary) 0xFF83B8E5.toInt() else 0xFF253241.toInt())
+                    cornerRadius = dp(9).toFloat()
+                }
+                setOnClickListener { action() }
+            }, LinearLayout.LayoutParams(0, dp(42), 1f).apply {
+                if (label != "LIMPIAR") marginEnd = dp(7)
+                else marginStart = dp(7)
+            })
+        }
+        footerAction("AÑADIR ARCHIVOS", true) { dialog.dismiss(); pickFile() }
+        footerAction("LIMPIAR") {
+            playlist.clear()
+            playlistIndex = -1
+            dialog.dismiss()
+            showOsd("Lista vaciada")
+        }
+        root.addView(footer)
+
+        dialog.setContentView(root)
+        dialog.show()
+        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(0x00000000))
+        val width = minOf(dp(440), resources.displayMetrics.widthPixels - dp(24))
+        val height = (resources.displayMetrics.heightPixels * 0.78f).toInt()
+        dialog.window?.setLayout(width, height)
+        dialog.window?.setGravity(android.view.Gravity.END or android.view.Gravity.CENTER_VERTICAL)
+        dialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        dialog.window?.attributes = dialog.window?.attributes?.apply { dimAmount = 0.55f }
+    }
+
               private fun showMediaInfo() {
                   val uri = currentUri ?: run { Toast.makeText(this, "Primero abre un archivo", Toast.LENGTH_SHORT).show(); return }
                   Thread {
