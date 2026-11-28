@@ -111,7 +111,7 @@
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="MPM" android:textColor="#BDBDBD" android:textSize="10sp" android:paddingEnd="4dp" />
         </LinearLayout>
-        <HorizontalScrollView android:layout_width="match_parent" android:layout_height="36dp"
+        <HorizontalScrollView android:layout_width="match_parent" android:layout_height="42dp"
             android:fillViewport="false" android:scrollbars="none" android:background="#292929">
             <LinearLayout android:layout_width="wrap_content" android:layout_height="match_parent"
                 android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="2dp">
@@ -159,16 +159,16 @@
         <LinearLayout android:id="@+id/playerControlsRow" android:layout_width="match_parent"
             android:layout_height="42dp" android:orientation="horizontal" android:gravity="center_vertical"
             android:paddingStart="5dp" android:paddingEnd="5dp" android:background="#292929">
-            <LinearLayout android:id="@+id/playerControlsLeft" android:layout_width="0dp"
-                android:layout_height="match_parent" android:layout_weight="1" android:gravity="center_vertical|start"
+            <LinearLayout android:id="@+id/playerControlsLeft" android:layout_width="wrap_content"
+                android:layout_height="match_parent" android:gravity="center_vertical|start"
                 android:orientation="horizontal">
                 <ImageButton android:id="@+id/btnAudioTrack" style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="30dp" android:layout_height="34dp" android:background="@drawable/mpm_classic_controls"
-                    android:src="@drawable/vlc_ic_audiotrack" android:scaleType="fitCenter" android:padding="8dp"
+                    android:src="@drawable/mpm_ic_audio" android:scaleType="fitCenter" android:padding="8dp"
                     android:contentDescription="Pistas de audio" android:backgroundTint="@null" android:stateListAnimator="@null" />
                 <ImageButton android:id="@+id/btnSubtitleTrack" style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="32dp" android:layout_height="34dp" android:layout_marginStart="2dp"
-                    android:background="@drawable/mpm_classic_controls" android:src="@drawable/vlc_ic_subtitle"
+                    android:background="@drawable/mpm_classic_controls" android:src="@drawable/mpm_ic_subtitle"
                     android:scaleType="fitCenter" android:padding="8dp" android:contentDescription="Subtítulos"
                     android:backgroundTint="@null" android:stateListAnimator="@null" />
             </LinearLayout>
@@ -192,16 +192,16 @@
                     android:background="@drawable/mpm_classic_controls" android:contentDescription="Avanzar"
                     android:backgroundTint="@null" android:stateListAnimator="@null" />
             </LinearLayout>
-            <LinearLayout android:id="@+id/playerControlsRight" android:layout_width="0dp"
-                android:layout_height="match_parent" android:layout_weight="1" android:gravity="center_vertical|end"
+            <LinearLayout android:id="@+id/playerControlsRight" android:layout_width="wrap_content"
+                android:layout_height="match_parent" android:gravity="center_vertical|end"
                 android:orientation="horizontal">
                 <ImageButton android:id="@+id/btnRotateBottom" style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="28dp" android:layout_height="34dp" android:background="@drawable/mpm_classic_controls"
-                    android:src="@drawable/vlc_ic_rotate" android:scaleType="fitCenter" android:padding="8dp"
+                    android:src="@drawable/mpm_ic_rotate" android:scaleType="fitCenter" android:padding="8dp"
                     android:contentDescription="Rotación" android:backgroundTint="@null" android:stateListAnimator="@null" />
                 <ImageButton android:id="@+id/btnCastBottom" style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="32dp" android:layout_height="34dp" android:layout_marginStart="2dp"
-                    android:background="@drawable/mpm_classic_controls" android:src="@drawable/vlc_ic_cast"
+                    android:background="@drawable/mpm_classic_controls" android:src="@drawable/mpm_ic_cast"
                     android:scaleType="fitCenter" android:padding="8dp" android:contentDescription="Emitir"
                     android:backgroundTint="@null" android:stateListAnimator="@null" />
                 <Button android:id="@+id/btnSpeed" style="@style/Widget.AppCompat.Button.Borderless"

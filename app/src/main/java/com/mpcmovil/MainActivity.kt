@@ -1195,9 +1195,9 @@ class MainActivity : AppCompatActivity() {
 
         // Keep each control group inside its own third of the row. On narrow
         // portrait screens Cast stays available in the main menu, avoiding overlap.
-        val leftWidths = intArrayOf(30, 32)
-        val centerWidths = intArrayOf(34, 40, 34)
-        val rightWidths = intArrayOf(28, 0, 34, 30)
+        val leftWidths = intArrayOf(32, 32)
+        val centerWidths = intArrayOf(36, 40, 36)
+        val rightWidths = intArrayOf(32, 0, 36, 32)
         val groups = listOf(
             R.id.playerControlsLeft to leftWidths,
             R.id.playerControlsCenter to centerWidths,
@@ -1223,7 +1223,7 @@ class MainActivity : AppCompatActivity() {
             getSharedPreferences("mpm_player", MODE_PRIVATE).getBoolean("floating_screenshot", true)
         ) View.VISIBLE else View.GONE
 
-        topBar.layoutParams = topBar.layoutParams.apply { height = dp(if (landscape) 72 else 76) }
+        topBar.layoutParams = topBar.layoutParams.apply { height = dp(if (landscape) 78 else 82) }
     }
 
     private fun togglePlayback() {
