@@ -21,10 +21,10 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Configurar Gradle 8.13
+      - name: Configurar Gradle 9.9.3
         uses: gradle/actions/setup-gradle@v6
         with:
-          gradle-version: '8.14.8'
+          gradle-version: '9.9.3'
 
       - name: Preparar firma permanente
         env:
