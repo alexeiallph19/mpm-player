@@ -210,13 +210,14 @@
                     android:scaleType="fitCenter" android:padding="8dp" android:contentDescription="Emitir"
                     android:backgroundTint="@null" android:stateListAnimator="@null" />
                 <Button android:id="@+id/btnSpeed" style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="34dp" android:layout_height="34dp" android:minWidth="0dp" android:minHeight="0dp"
-                    android:background="@drawable/mpm_classic_controls" android:text="1.0x" android:textAllCaps="false"
-                    android:textColor="#F2F2F2" android:textSize="10sp" android:backgroundTint="@null" android:stateListAnimator="@null" />
+                    android:layout_width="48dp" android:layout_height="34dp" android:minWidth="0dp" android:minHeight="0dp"
+                    android:background="@drawable/mpm_classic_controls" android:text="1.00×" android:textAllCaps="false"
+                    android:textColor="#F2F2F2" android:textSize="11sp" android:fontFamily="monospace"
+                    android:contentDescription="Velocidad de reproducción" android:backgroundTint="@null" android:stateListAnimator="@null" />
                 <Button android:id="@+id/btnMainMenu" style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="30dp" android:layout_height="34dp" android:minWidth="0dp" android:minHeight="0dp"
-                    android:background="@drawable/mpm_classic_controls" android:text="☰" android:textColor="#FFFFFF"
-                    android:textSize="16sp" android:contentDescription="Más opciones" android:backgroundTint="@null" android:stateListAnimator="@null" />
+                    android:background="@drawable/mpm_classic_controls" android:text="⋮" android:textColor="#FFFFFF"
+                    android:textSize="20sp" android:contentDescription="Más opciones" android:backgroundTint="@null" android:stateListAnimator="@null" />
             </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="17dp"

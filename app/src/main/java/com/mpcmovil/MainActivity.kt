@@ -1116,7 +1116,7 @@ class MainActivity : AppCompatActivity() {
                     speedIndex = (speedIndex + 1) % speeds.size
                     val speed = speeds[speedIndex]
                     mediaPlayer?.rate = speed
-                    btnSpeed.text = "${speed}X"
+                    btnSpeed.text = String.format(Locale.US, "%.2f×", speed)
                     showOsd("Velocidad: ${speed}X")
                 }
             }
@@ -1245,7 +1245,7 @@ class MainActivity : AppCompatActivity() {
         // portrait screens Cast stays available in the main menu, avoiding overlap.
         val leftWidths = intArrayOf(32, 32)
         val centerWidths = intArrayOf(36, 40, 36)
-        val rightWidths = intArrayOf(32, 0, 36, 32)
+        val rightWidths = intArrayOf(32, 0, 48, 36)
         val groups = listOf(
             R.id.playerControlsLeft to leftWidths,
             R.id.playerControlsCenter to centerWidths,
@@ -1377,7 +1377,7 @@ class MainActivity : AppCompatActivity() {
             speedIndex = (speedIndex + 1) % speeds.size
             val spd = speeds[speedIndex]
             mediaPlayer?.rate = spd
-            btnSpeed.text = "${spd}X"
+            btnSpeed.text = String.format(Locale.US, "%.2f×", spd)
             showOsd("Velocidad: ${spd}X")
         }
 
@@ -2791,49 +2791,89 @@ class MainActivity : AppCompatActivity() {
         val player = mediaPlayer
         val uri = currentUri
         if (player == null || uri == null) {
-            Toast.makeText(this, "Primero abre un archivo", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Primero abre un video", Toast.LENGTH_SHORT).show()
             return
         }
-        val elapsed = player.time.coerceAtLeast(0L)
-        val duration = player.length.coerceAtLeast(0L)
-        val percent = if (duration > 0L) String.format(Locale.US, "%.1f%%", player.position.coerceIn(0f, 1f) * 100f) else "No disponible"
-        val audioTracks = runCatching { player.audioTracks }.getOrNull().orEmpty()
-        val audioId = runCatching { player.audioTrack }.getOrNull()
-        val subtitleId = runCatching { player.spuTrack }.getOrNull()
-        val report = buildString {
-            append("ESTADO\n")
-            append(if (player.isPlaying) "Reproduciendo" else "En pausa / preparando").append("\n")
-            append("Archivo: ").append(getDisplayName(uri)).append("\n")
-            append("Posición: ").append(formatTime(elapsed)).append(" / ").append(if (duration > 0L) formatTime(duration) else "No disponible").append("\n")
-            append("Progreso: ").append(percent).append("\n")
-            append("Velocidad: ").append(String.format(Locale.US, "%.2fx", player.rate)).append("\n\n")
-            append("DECODIFICACIÓN\n")
-            append("Motor: LibVLC 3.7.7\n")
-            append("Modo solicitado: ").append(if (isHw) "Hardware" else "Software").append("\n")
-            append("Frecuencia de pantalla: ").append(displayRefreshRateLabel()).append("\n\n")
-            append("PISTAS\n")
-            append("Pistas de audio detectadas: ").append(audioTracks.size).append("\n")
-            append("ID de audio activa: ").append(audioId ?: "No disponible").append("\n")
-            append("ID de subtítulo activo: ").append(subtitleId ?: "No disponible").append("\n\n")
-            append("DATOS EN TIEMPO REAL\n")
-            append("FPS, bitrate instantáneo, frames perdidos y uso de CPU/GPU no están expuestos por la API Android de LibVLC usada por esta versión. No se muestran valores estimados.")
+        val dialog = android.app.Dialog(this)
+        val root = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(18), dp(14), dp(18), dp(14))
+            background = android.graphics.drawable.GradientDrawable().apply {
+                setColor(0xE6222222.toInt())
+                cornerRadius = dp(8).toFloat()
+                setStroke(dp(1), 0x665F5F5F)
+            }
         }
-        val panel = android.widget.ScrollView(this).apply {
-            setPadding(dp(18), dp(8), dp(18), dp(8))
-            addView(TextView(this@MainActivity).apply {
-                text = report
-                setTextColor(0xFFE0E0E0.toInt())
-                textSize = 13f
-                typeface = android.graphics.Typeface.MONOSPACE
-                setLineSpacing(dp(3).toFloat(), 1f)
-            })
+        val header = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; gravity = android.view.Gravity.CENTER_VERTICAL }
+        header.addView(TextView(this).apply {
+            text = "ESTADÍSTICAS DE REPRODUCCIÓN"
+            setTextColor(0xFFF0F0F0.toInt()); textSize = 13f
+            typeface = android.graphics.Typeface.MONOSPACE
+        }, LinearLayout.LayoutParams(0, dp(34), 1f))
+        header.addView(TextView(this).apply {
+            text = "×"; textSize = 24f; gravity = android.view.Gravity.CENTER
+            setTextColor(0xFFE0E0E0.toInt()); setOnClickListener { dialog.dismiss() }
+        }, LinearLayout.LayoutParams(dp(36), dp(34)))
+        root.addView(header)
+        root.addView(View(this).apply { setBackgroundColor(0x665F5F5F) },
+            LinearLayout.LayoutParams(-1, dp(1)).apply { bottomMargin = dp(8) })
+        val report = TextView(this).apply {
+            setTextColor(0xFFE0E0E0.toInt()); textSize = 12f
+            typeface = android.graphics.Typeface.MONOSPACE
+            setLineSpacing(dp(3).toFloat(), 1f); setTextIsSelectable(true)
         }
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Estadísticas de reproducción")
-            .setView(panel)
-            .setPositiveButton("Actualizar") { _, _ -> showStatisticsPanel() }
-            .setNegativeButton("Cerrar", null)
-            .show()
+        root.addView(report, LinearLayout.LayoutParams(-1, 0, 1f))
+        root.addView(TextView(this).apply {
+            text = "ACTUALIZACIÓN EN VIVO · N/D = dato no expuesto por el motor"
+            setTextColor(0xFFAAAAAA.toInt()); textSize = 9f
+            typeface = android.graphics.Typeface.MONOSPACE; setPadding(0, dp(10), 0, 0)
+        })
+        fun renderStats() {
+            val elapsed = runCatching { player.time.coerceAtLeast(0L) }.getOrDefault(0L)
+            val duration = runCatching { player.length.coerceAtLeast(0L) }.getOrDefault(0L)
+            val percent = runCatching { player.position.coerceIn(0f, 1f) * 100f }.getOrNull()
+            val video = runCatching { player.videoTracks }.getOrNull().orEmpty()
+            val audio = runCatching { player.audioTracks }.getOrNull().orEmpty()
+            val subs = runCatching { player.spuTracks }.getOrNull().orEmpty()
+            val audioId = runCatching { player.audioTrack }.getOrDefault(-1)
+            val subId = runCatching { player.spuTrack }.getOrDefault(-1)
+            report.text = buildString {
+                append("ESTADO\n")
+                append(if (runCatching { player.isPlaying }.getOrDefault(false)) "Reproduciendo" else "En pausa / preparando").append("\n")
+                append("Archivo: ").append(getDisplayName(uri)).append("\n")
+                append("Tiempo: ").append(formatTime(elapsed)).append(" / ").append(if (duration > 0L) formatTime(duration) else "N/D").append("\n")
+                append("Progreso: ").append(percent?.let { String.format(Locale.US, "%.1f%%", it) } ?: "N/D").append("\n")
+                append("Velocidad: ").append(runCatching { String.format(Locale.US, "%.2f×", player.rate) }.getOrDefault("N/D")).append("\n\n")
+                append("MOTOR Y PISTAS\nMotor: LibVLC 3.7.7\n")
+                append("Decodificación solicitada: ").append(if (isHw) "Hardware" else "Software").append("\n")
+                append("Vídeo: ").append(video.size).append(" pistas").append("\n")
+                append("Audio: ").append(audio.size).append(" pistas")
+                audio.firstOrNull { it.id == audioId }?.name?.let { append(" · ").append(it) }
+                append("\nSubtítulos: ").append(subs.size).append(" pistas")
+                subs.firstOrNull { it.id == subId }?.name?.let { append(" · ").append(it) }
+                append("\nPantalla: ").append(displayRefreshRateLabel()).append("\n\n")
+                append("CONTADORES DEL DECODIFICADOR\nFPS instantáneos, bitrate de salida, frames perdidos y uso CPU/GPU: N/D. La API Android de LibVLC integrada no expone estos contadores de forma fiable.")
+            }
+        }
+        val ticker = object : Runnable {
+            override fun run() {
+                if (dialog.isShowing) {
+                    renderStats()
+                    handler.postDelayed(this, 1000L)
+                }
+            }
+        }
+        dialog.setContentView(root)
+        dialog.show()
+        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(0x00000000))
+        dialog.window?.setLayout(minOf(dp(460), resources.displayMetrics.widthPixels - dp(28)),
+            (resources.displayMetrics.heightPixels * 0.72f).toInt())
+        dialog.window?.setGravity(android.view.Gravity.CENTER)
+        dialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        dialog.window?.attributes = dialog.window?.attributes?.apply { dimAmount = 0.32f }
+        dialog.setOnDismissListener { handler.removeCallbacks(ticker) }
+        renderStats()
+        handler.postDelayed(ticker, 1000L)
     }
 
     private fun showMediaInfo() {
@@ -2954,7 +2994,11 @@ private fun showOsd(msg: String) {
         if (filePickerPending) {
             resumeAfterFilePicker = mediaPlayer?.isPlaying == true || resumeAfterFilePicker
         }
-        mediaPlayer?.pause()
+        // Android llama onPause() al entrar en PiP; no pausar el motor en ese caso.
+        val stayingInPip = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isInPictureInPictureMode
+        if (!stayingInPip && !subtitlePickerPending && !filePickerPending) {
+            mediaPlayer?.pause()
+        }
     }
 
     override fun onDestroy() {
