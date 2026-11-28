@@ -1042,6 +1042,14 @@ class MainActivity : AppCompatActivity() {
             "Abrir archivo…" to { pickFile() },
             "Abrir transmisión de red…" to { showNetworkStreamDialog() },
             "Emitir a dispositivo…" to { showCastDialog() },
+            "Ventana flotante (PiP)" to {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mediaPlayer?.isPlaying == true) {
+                    enterPictureInPictureMode(
+                        android.app.PictureInPictureParams.Builder()
+                            .setAspectRatio(android.util.Rational(16, 9)).build()
+                    )
+                } else Toast.makeText(this, "Inicia un vídeo para usar la ventana flotante", Toast.LENGTH_SHORT).show()
+            },
             "Tomar captura de pantalla" to { takeScreenshot() },
             ("Botón flotante de captura: " + if (getSharedPreferences("mpm_player", MODE_PRIVATE).getBoolean("floating_screenshot", true)) "Activado" else "Desactivado") to { toggleFloatingScreenshot() },
             ("Intervalo de doble toque (" + seekIntervalSeconds + " s)") to { showSeekIntervalDialog() },
@@ -1326,6 +1334,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnMenuAyuda).setOnClickListener { showTopMenu(it, "Ayuda") }
 
         findViewById<Button>(R.id.btnLibraryOpen).setOnClickListener { pickFile() }
+        findViewById<Button>(R.id.btnLibraryNetwork).setOnClickListener { showNetworkStreamDialog() }
         findViewById<Button>(R.id.btnLibraryRefresh).setOnClickListener { refreshLibrary() }
         findViewById<Button>(R.id.btnLibrarySettings).setOnClickListener { showPlayerSettings() }
         findViewById<Button>(R.id.btnLibraryVideos).setOnClickListener { renderLibrary("Videos") }
@@ -2373,6 +2382,40 @@ class MainActivity : AppCompatActivity() {
             window.decorView.post {
                 if (immersiveMode) enterImmersiveMode() else showSystemBars()
             }
+        }
+    }
+
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        // Android 8+: al salir de la app durante una reproducción, ofrecer PiP.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            mediaPlayer?.isPlaying == true && currentUri != null && !isFinishing) {
+            try {
+                val builder = android.app.PictureInPictureParams.Builder()
+                    .setAspectRatio(android.util.Rational(16, 9))
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    builder.setAutoEnterEnabled(true)
+                }
+                enterPictureInPictureMode(builder.build())
+            } catch (e: Exception) {
+                Log.w("MPM_PLAYER", "No se pudo activar Picture-in-Picture", e)
+            }
+        }
+    }
+
+    override fun onPictureInPictureModeChanged(
+        isInPictureInPictureMode: Boolean,
+        newConfig: Configuration
+    ) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+        if (isInPictureInPictureMode) {
+            handler.removeCallbacks(controlsHideRunnable)
+            topBar.visibility = View.GONE
+            bottomBar.visibility = View.GONE
+            centerControls.visibility = View.GONE
+            btnScreenshotFloat.visibility = View.GONE
+        } else if (!isLibraryVisible) {
+            setControlsVisible(true)
         }
     }
 
