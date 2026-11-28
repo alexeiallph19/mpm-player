@@ -892,6 +892,43 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showNetworkStreamDialog() {
+        val clipboard = getSystemService(CLIPBOARD_SERVICE) as? android.content.ClipboardManager
+        val clipText = clipboard?.primaryClip?.takeIf { it.itemCount > 0 }?.getItemAt(0)?.coerceToText(this)?.toString()?.trim().orEmpty()
+        val input = EditText(this).apply {
+            hint = "https://servidor/video.m3u8 o rtsp://servidor:554/…"
+            singleLine = true
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_URI
+            if (clipText.startsWith("http://", true) || clipText.startsWith("https://", true) || clipText.startsWith("rtsp://", true) || clipText.startsWith("rtmp://", true)) setText(clipText)
+        }
+        val wrapper = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            val pad = (24 * resources.displayMetrics.density).toInt()
+            setPadding(pad, 0, pad, 0)
+            addView(input, LinearLayout.LayoutParams(-1, -2))
+        }
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle("Abrir transmisión de red")
+            .setMessage("Pega una dirección compatible con LibVLC")
+            .setView(wrapper)
+            .setNegativeButton("Cancelar", null)
+            .setPositiveButton("Reproducir", null)
+            .create()
+        dialog.setOnShowListener {
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val address = input.text.toString().trim()
+                val parsed = Uri.parse(address)
+                val supported = setOf("http", "https", "rtsp", "rtmp", "udp", "tcp", "mms", "ftp")
+                if (parsed.scheme?.lowercase(Locale.ROOT) !in supported || parsed.host.isNullOrBlank()) {
+                    input.error = "Introduce una URL completa (http, https, rtsp, rtmp, udp, tcp o mms)"
+                } else {
+                    dialog.dismiss()
+                    play(parsed)
+                }
+            }
+        }
+        dialog.show()
+    }
     private fun takeScreenshot() {
         val uri = currentUri
         if (uri == null || mediaPlayer == null) {
@@ -929,12 +966,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun saveScreenshotBitmap(bitmap: Bitmap, originalResolution: Boolean) {
-        val fileName = "MPM_" + SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.US).format(Date()) + ".jpg"
+        val fileName = "MPM_" + SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.US).format(Date()) + ".png"
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val values = ContentValues().apply {
                     put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
-                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                    put(MediaStore.Images.Media.MIME_TYPE, "image/png")
                     put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/MPM Player")
                     put(MediaStore.Images.Media.IS_PENDING, 1)
                 }
@@ -944,7 +981,7 @@ class MainActivity : AppCompatActivity() {
                     val output = contentResolver.openOutputStream(imageUri)
                         ?: throw IllegalStateException("No se pudo guardar la imagen")
                     output.use { stream ->
-                        if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)) {
+                        if (!bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)) {
                             throw IllegalStateException("No se pudo codificar la captura")
                         }
                     }
@@ -963,11 +1000,11 @@ class MainActivity : AppCompatActivity() {
                         throw IllegalStateException("No se pudo codificar la captura")
                     }
                 }
-                MediaScannerConnection.scanFile(this, arrayOf(file.absolutePath), arrayOf("image/jpeg"), null)
+                MediaScannerConnection.scanFile(this, arrayOf(file.absolutePath), arrayOf("image/png"), null)
             }
             val resolution = bitmap.width.toString() + "×" + bitmap.height
-            showOsd("Captura guardada · " + resolution + if (originalResolution) " · resolución original" else " · captura de pantalla")
-            Toast.makeText(this, "Captura guardada en Imágenes/MPM Player (" + resolution + ")", Toast.LENGTH_LONG).show()
+            showOsd("Captura PNG guardada · " + resolution + if (originalResolution) " · resolución original" else " · captura de pantalla")
+            Toast.makeText(this, "Captura PNG guardada en Imágenes/MPM Player (" + resolution + ")", Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
             Log.e("MPM_PLAYER", "Error al guardar la captura", e)
             Toast.makeText(this, "No se pudo guardar la captura: " + (e.message ?: "error"), Toast.LENGTH_LONG).show()
@@ -1002,6 +1039,7 @@ class MainActivity : AppCompatActivity() {
         showMpmMenu(anchor, "MPM PLAYER", listOf(
             "Biblioteca" to { welcomeScreen.visibility = View.VISIBLE; renderLibrary(libraryMode); showSystemBars() },
             "Abrir archivo…" to { pickFile() },
+            "Abrir transmisión de red…" to { showNetworkStreamDialog() },
             "Emitir a dispositivo…" to { showCastDialog() },
             "Tomar captura de pantalla" to { takeScreenshot() },
             ("Botón flotante de captura: " + if (getSharedPreferences("mpm_player", MODE_PRIVATE).getBoolean("floating_screenshot", true)) "Activado" else "Desactivado") to { toggleFloatingScreenshot() },
@@ -1031,6 +1069,7 @@ class MainActivity : AppCompatActivity() {
         when (section) {
             "Archivo" -> {
                 items += "Abrir video" to { pickFile() }
+                items += "Abrir transmisión de red…" to { showNetworkStreamDialog() }
                 items += "Abrir audio" to { pickAudio() }
                 items += "Abrir subtítulo" to { pickExternalSubtitle() }
                 items += "Lista de reproducción" to { showPlaylist() }
