@@ -86,8 +86,13 @@
                 android:layout_width="0dp" android:layout_height="38dp" android:layout_weight="1"
                 android:minHeight="0dp" android:text="Abrir archivo…" android:textAllCaps="false"
                 android:textColor="#FFFFFF" android:textSize="13sp" android:background="#444444" />
+            <Button android:id="@+id/btnLibraryNetwork" style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="88dp" android:layout_height="38dp" android:layout_marginStart="6dp"
+                android:minWidth="0dp" android:minHeight="0dp" android:text="URL de red…"
+                android:textAllCaps="false" android:textColor="#E5E5E5" android:textSize="11sp"
+                android:background="#303030" />
             <Button android:id="@+id/btnLibraryPlaylist" style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="104dp" android:layout_height="38dp" android:layout_marginStart="6dp"
+                android:layout_width="76dp" android:layout_height="38dp" android:layout_marginStart="6dp"
                 android:minWidth="0dp" android:minHeight="0dp" android:text="Lista" android:textAllCaps="false"
                 android:textColor="#E5E5E5" android:textSize="12sp" android:background="#303030" />
         </LinearLayout>
