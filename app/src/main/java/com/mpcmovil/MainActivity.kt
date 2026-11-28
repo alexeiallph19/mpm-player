@@ -929,6 +929,7 @@ class MainActivity : AppCompatActivity() {
         }
         dialog.show()
     }
+
     private fun takeScreenshot() {
         val uri = currentUri
         if (uri == null || mediaPlayer == null) {
@@ -996,7 +997,7 @@ class MainActivity : AppCompatActivity() {
                 if (!folder.exists() && !folder.mkdirs()) throw IllegalStateException("No se pudo crear la carpeta de capturas")
                 val file = File(folder, fileName)
                 FileOutputStream(file).use { stream ->
-                    if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)) {
+                    if (!bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)) {
                         throw IllegalStateException("No se pudo codificar la captura")
                     }
                 }
