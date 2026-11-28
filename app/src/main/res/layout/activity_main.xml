@@ -10,7 +10,7 @@
         android:layout_height="match_parent" android:orientation="vertical" android:background="#202020">
         <LinearLayout android:layout_width="match_parent" android:layout_height="42dp"
             android:gravity="center_vertical" android:paddingStart="12dp" android:paddingEnd="8dp"
-            android:background="#303030">
+            android:background="#2B2B2B">
             <ImageView android:layout_width="24dp" android:layout_height="24dp"
                 android:src="@drawable/ic_mpm_logo" android:contentDescription="MPM" />
             <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
@@ -81,7 +81,7 @@
         </ScrollView>
         <LinearLayout android:layout_width="match_parent" android:layout_height="48dp"
             android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="8dp"
-            android:paddingEnd="8dp" android:background="#292929">
+            android:paddingEnd="8dp" android:background="#252525">
             <Button android:id="@+id/btnLibraryOpen" style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp" android:layout_height="38dp" android:layout_weight="1"
                 android:minHeight="0dp" android:text="Abrir archivo…" android:textAllCaps="false"
@@ -89,7 +89,7 @@
             <Button android:id="@+id/btnLibraryPlaylist" style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="104dp" android:layout_height="38dp" android:layout_marginStart="6dp"
                 android:minWidth="0dp" android:minHeight="0dp" android:text="Lista" android:textAllCaps="false"
-                android:textColor="#E5E5E5" android:textSize="12sp" android:background="#383838" />
+                android:textColor="#E5E5E5" android:textSize="12sp" android:background="#303030" />
         </LinearLayout>
     </LinearLayout>
 
@@ -109,7 +109,7 @@
                 android:ellipsize="middle" android:text="MPM Player" android:textColor="#F0F0F0"
                 android:textSize="11sp" android:fontFamily="sans-serif" android:paddingStart="6dp" />
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="MPM" android:textColor="#BDBDBD" android:textSize="10sp" android:paddingEnd="4dp" />
+                android:text="MPM-QT" android:textColor="#BDBDBD" android:textSize="10sp" android:paddingEnd="4dp" />
         </LinearLayout>
         <HorizontalScrollView android:layout_width="match_parent" android:layout_height="30dp"
             android:fillViewport="false" android:scrollbars="none" android:background="#292929">
@@ -134,7 +134,7 @@
     </LinearLayout>
     <TextView android:id="@+id/txtOsd" android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|top" android:layout_marginTop="74dp"
-        android:background="@drawable/vlc_osd_background" android:paddingStart="14dp" android:paddingEnd="14dp"
+        android:background="@drawable/mpm_classic_controls" android:paddingStart="14dp" android:paddingEnd="14dp"
         android:paddingTop="8dp" android:paddingBottom="8dp" android:textColor="#FFFFFF" android:textSize="12sp"
         android:visibility="gone" />
 
@@ -157,7 +157,7 @@
             android:progressDrawable="@drawable/mpm_seekbar_track" android:thumb="@drawable/mpm_seekbar_thumb"
             android:thumbOffset="9dp" android:splitTrack="false" android:contentDescription="Barra de progreso del video" />
         <LinearLayout android:id="@+id/playerControlsRow" android:layout_width="match_parent"
-            android:layout_height="40dp" android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_height="44dp" android:orientation="horizontal" android:gravity="center_vertical"
             android:paddingStart="5dp" android:paddingEnd="5dp" android:background="#292929">
             <LinearLayout android:id="@+id/playerControlsLeft" android:layout_width="wrap_content"
                 android:layout_height="match_parent" android:gravity="center_vertical|start"
@@ -176,12 +176,12 @@
                 android:layout_height="match_parent" android:layout_weight="1" android:gravity="center"
                 android:orientation="horizontal">
                 <ImageButton android:id="@+id/btnBack" style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="34dp" android:layout_height="34dp" android:minWidth="0dp" android:minHeight="0dp"
+                    android:layout_width="36dp" android:layout_height="36dp" android:minWidth="0dp" android:minHeight="0dp"
                     android:src="@drawable/mpm_ic_previous" android:scaleType="fitCenter" android:padding="8dp"
                     android:background="@drawable/mpm_classic_controls" android:contentDescription="Retroceder"
                     android:backgroundTint="@null" android:stateListAnimator="@null" />
                 <ImageButton android:id="@+id/btnPlay" style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="40dp" android:layout_height="36dp" android:layout_marginStart="2dp"
+                    android:layout_width="42dp" android:layout_height="38dp" android:layout_marginStart="2dp"
                     android:layout_marginEnd="2dp" android:minWidth="0dp" android:minHeight="0dp"
                     android:background="@drawable/mpm_classic_controls" android:src="@drawable/mpm_ic_pause"
                     android:scaleType="fitCenter" android:padding="9dp" android:contentDescription="Pausar"
@@ -216,7 +216,7 @@
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="17dp"
             android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="8dp"
-            android:paddingEnd="8dp" android:background="#222222">
+            android:paddingEnd="8dp" android:background="#1D1D1D">
             <TextView android:id="@+id/txtDecoderInfo" android:layout_width="0dp" android:layout_height="match_parent"
                 android:layout_weight="1" android:gravity="start|center_vertical" android:text="[HW]"
                 android:textColor="#BDBDBD" android:textSize="10sp" android:fontFamily="monospace" />
