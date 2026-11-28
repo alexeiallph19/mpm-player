@@ -897,7 +897,7 @@ class MainActivity : AppCompatActivity() {
         val clipText = clipboard?.primaryClip?.takeIf { it.itemCount > 0 }?.getItemAt(0)?.coerceToText(this)?.toString()?.trim().orEmpty()
         val input = EditText(this).apply {
             hint = "https://servidor/video.m3u8 o rtsp://servidor:554/…"
-            singleLine = true
+            isSingleLine = true
             inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_URI
             if (clipText.startsWith("http://", true) || clipText.startsWith("https://", true) || clipText.startsWith("rtsp://", true) || clipText.startsWith("rtmp://", true)) setText(clipText)
         }
